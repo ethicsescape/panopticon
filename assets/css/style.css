@@ -1,0 +1,380 @@
+/* Text */
+
+html {
+    background: #1A1A1A;
+    font-family: 'Inconsolata', monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 10px;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+p {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.centered {
+    text-align: center;
+}
+
+/* Layout */
+
+.header {
+    background: black;
+    text-align: center;
+}
+
+.header .tab {
+    display: inline-block;
+    min-width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    padding: 0 20px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.header .tab:hover {
+    background: red;
+    cursor: pointer;
+}
+
+.header .tab.selected {
+    color: red;
+}
+
+.header .tab.selected:hover {
+    color: black;
+}
+
+.header .tab img {
+    display: inline-block;
+    margin-top: 12px;
+    height: 24px;
+    vertical-align: top;
+}
+
+.app {
+    text-align: center;
+}
+
+.sidebar, .page {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page {
+    padding: 20px;
+    max-width: 780px;
+    text-align: left;
+}
+
+.page .content {
+    background: white;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 50px;
+    padding: 20px;
+}
+
+.sidebar .timer {
+    text-align: center;
+    color: red;
+    font-size: 18px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.sidebar .clue {
+    border: 2px dashed white;
+    color: white;
+    opacity: 0.25;
+    width: 46px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 23px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.sidebar .clue span {
+    display: none;
+}
+
+.sidebar .clue.unlocked {
+    opacity: 1.0;
+    border: 2px dashed green;
+    color: green;
+    cursor: pointer;
+    overflow: visible;
+}
+
+.sidebar .clue.unlocked:hover {
+    border: 2px solid green;
+    background: green;
+    color: white;
+}
+
+.sidebar .clue.unlocked:hover span {
+    position: relative;
+    top: -46px;
+    display: inline-block;
+    text-align: center;
+    background: green;
+    color: white;
+    margin-left: 60px;
+    padding: 0 10px;
+    z-index: 1;
+}
+
+@media screen and (max-width: 930px) {
+    
+    .sidebar, .page {
+        display: block;
+    }
+    
+    .sidebar {
+        width: auto;
+    }
+    
+    .sidebar .clue {
+        display: inline-block;
+    }
+    
+    .sidebar .timer {
+        font-size: 28px;
+    }
+    
+}
+
+/* Utilities */
+
+.hidden {
+    display: none;
+}
+
+/* Forms */
+
+.content .form {
+    margin: 10px;
+}
+
+.secure-form {
+    width: 320px;
+    margin: 0 auto;
+}
+
+.decision-form {
+    width: 470px;
+    margin: 0 auto;
+}
+
+.form input, .form button, .form select, .form textarea, .button {
+    font-family: 'Inconsolata', monospace;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.form input {
+    letter-spacing: 2px;
+}
+
+.form button {
+    background: black;
+    color: white;
+}
+
+.form button:hover {
+    cursor: pointer;
+    background: blue;
+}
+
+.message.success {
+    color: green;
+}
+
+.message.failure {
+    color: red;
+}
+
+.button {
+    border: 2px solid black;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.button.primary {
+    background: black;
+    color: white;
+}
+
+.button:hover {
+    background: blue;
+    color: white;
+    cursor: pointer;
+}
+
+.form select {
+    box-sizing: border-box;
+    border: 2px solid black;
+    border-radius: 0;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    width: 200px;
+    margin: 10px 0;
+    padding: 10px;
+    color: black;
+}
+
+.form textarea {
+    border: 2px solid black;
+    box-sizing: border-box;
+    padding: 10px;
+    width: 450px;
+    min-width: 450px;
+    max-width: 450px;
+    min-height: 80px;
+}
+
+/* Content */
+
+.content img {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content strong {
+    font-weight: bold;
+}
+
+.content hr {
+    margin: 10px;
+}
+
+.content table {
+    text-align: left;
+    margin: 10px;
+}
+
+.content table th {
+    font-weight: bold;
+}
+
+.content table td, .content table th {
+    padding: 10px;
+    border: 1px dashed black;
+}
+
+.content ul, ol {
+    margin: 10px;
+}
+
+.content .nonlist {
+    list-style-type: none;
+}
+
+.content ul {
+    list-style-type: disc;
+}
+
+.content ol {
+    list-style-type: decimal;
+}
+
+.content li {
+    margin: 10px 0;
+}
+
+.content ul li, .content ol li {
+    margin-left: 1.5em;
+}
+
+.content .nonlist li {
+    margin-left: 10px;
+}
+
+.content ul ul {
+    margin: 10px 20px;
+}
+
+.folder, .file, .email {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.banner {
+    background: green;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+}
+
+/* Clues */
+
+.sticky {
+    float: right;
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    margin-top: -160px;
+    padding: 20px;
+    background: yellow;
+    opacity: 0.75;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+    transform: rotate(-15deg);
+    -moz-transform: rotate(-15deg);  
+    -webkit-transform: rotate(-15deg);  
+    -o-transform: rotate(-15deg);  
+    -ms-transform: rotate(-15deg);
+}
+
+.sticky:hover {
+    opacity: 1.0;
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Lobby */
+
+#game-link {
+    background: lightgray;
+    padding: 10px;
+}
+
+.landing-image {
+    margin: 0 auto;
+    width: 250px;
+}

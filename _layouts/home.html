@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Fight retail fraud with Panopticon Security.">
+        <title>Panopticon Security</title>
+        <link id="favicon" rel="icon" href="https://cdn.glitch.com/4520b2f3-4c55-4f09-802e-32d673d80432%2Flogo-white.png?v=1590295948241" type="image/png">
+        <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <link rel="stylesheet" href="/assets/css/reset.css">
+        <link rel="stylesheet" href="/assets/css/style.css">
+        <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-database.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <span class="tab"><img alt="Panopticon Security Logo" src="/assets/img/logo-white.png" /> Panopticon Security</span>
+        </div>
+        <div class="app">
+            <div class="page">
+                <div class="content" data-view="home">
+                    <h1 class="uppercase centered">Panopticon Escape Room</h1>
+                    <p class="centered">Panopticon is a virtual escape room for 2-4 players.</p>
+                    <p class="centered">But the escape has already happened...</p>
+                    <p class="centered">Help catch the thief.</p>
+                    <img class="landing-image" alt="Floor plan for Mark's Department Store." src="/assets/img/floor_plan_plain.png" />
+                    <div id="create-game">
+                        <p class="centered">Create a game to invite your friends and start playing.</p>
+                        <p class="centered">
+                            <span class="button">Create a Game</span>
+                        </p>
+                    </div>
+                    <div class="hidden" data-view="join">
+                        <br>
+                        <hr>
+                        <br>
+                        <h2>Game Lobby</h2>
+                        <p>You have joined the game!</p>
+                        <p>Share this link with your friends:</p>
+                        <p id="game-link"></p>
+                        <p>Wait for your friends to join, then enter the game.</p>
+                        <p id="lobby-status" class="message"></p>
+                        <button id="start-game" class="button primary">Enter the Game</button>
+                        <button id="leave-game" class="button">Leave Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/assets/js/script.js" defer></script>
+    </body>
+</html>
