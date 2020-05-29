@@ -68,14 +68,8 @@ function getViewId() {
 }
 
 function getClueId() {
-    if (window.location.origin.indexOf("ethicsescape.github.io") > -1) {
-        if (window.location.pathname.split("/")[3]) {
-            return window.location.pathname.split("/")[3];
-        }
-        return undefined;
-    }
-    if (window.location.pathname.split("/")[2]) {
-        return window.location.pathname.split("/")[2];
+    if (window.location.href.indexOf("?c=") > -1) {
+        return window.location.href.split("?c=")[1];
     }
     return undefined;
 }
