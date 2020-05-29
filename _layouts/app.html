@@ -9,8 +9,8 @@
         <link id="favicon" rel="icon" href="https://cdn.glitch.com/4520b2f3-4c55-4f09-802e-32d673d80432%2Flogo-white.png?v=1590295948241" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        <link rel="stylesheet" href="/assets/css/reset.css">
-        <link rel="stylesheet" href="/assets/css/style.css">
+        <link rel="stylesheet" href="./assets/css/reset.css">
+        <link rel="stylesheet" href="./assets/css/style.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js" defer></script>
         <script src="https://cdn.rawgit.com/beautify-web/js-beautify/v1.6.3/js/lib/beautify-html.js" defer></script>
         <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
@@ -18,12 +18,12 @@
     </head>
     <body>
         <div class="header">
-            <a href="/" class="tab"><img alt="Panopticon Security Logo" src="/assets/img/logo-white.png" /> Panopticon Security</a>
-            <a href="/case" class="tab" data-tab="case"><i class="fa fa-briefcase"></i> Case</a>
-            <a href="/data" class="tab" data-tab="data"><i class="fa fa-signal"></i> Data</a>
-            <a href="/files" class="tab" data-tab="files"><i class="fa fa-folder-open"></i> Files</a>
-            <a href="/email" class="tab" data-tab="email"><i class="fa fa-envelope"></i> Email</a>
-            <a href="/decision" class="tab" data-tab="email"><i class="fa fa-gavel"></i> Decision</a>
+            <a href="./" class="tab"><img alt="Panopticon Security Logo" src="./assets/img/logo-white.png" /> Panopticon Security</a>
+            <a href="./case" class="tab" data-tab="case"><i class="fa fa-briefcase"></i> Case</a>
+            <a href="./data" class="tab" data-tab="data"><i class="fa fa-signal"></i> Data</a>
+            <a href="./files" class="tab" data-tab="files"><i class="fa fa-folder-open"></i> Files</a>
+            <a href="./email" class="tab" data-tab="email"><i class="fa fa-envelope"></i> Email</a>
+            <a href="./decision" class="tab" data-tab="email"><i class="fa fa-gavel"></i> Decision</a>
         </div>
         <div class="app">
             <div class="sidebar">
@@ -35,7 +35,7 @@
                     <h1 class="uppercase">Case</h1>
                     <h2>Situation Briefing</h2>
                     <p>First things first, read the situation briefing.</p>
-                    <a href="/document/briefing" class="button"><i class="fa fa-flag"></i> Open Briefing</a>
+                    <a href="./document/briefing" class="button"><i class="fa fa-flag"></i> Open Briefing</a>
                     <hr>
                     <h2>Stolen Merchandise</h2>
                     <p>Below is the metadata about the affected merchandise, from the integrated case management system.</p>
@@ -57,7 +57,7 @@
                     <div class="sticky">Risk Layer Password: krichev</div>
                     <h2>Case Decision</h2>
                     <p>When you have determined your prime suspect, visit the decision tab to submit your choice and rationale to store management.</p>
-                    <a href="/decision" class="button"><i class="fa fa-gavel"></i> Go to Decision Form</a>
+                    <a href="./decision" class="button"><i class="fa fa-gavel"></i> Go to Decision Form</a>
                 </div>
                 <div class="content hidden" data-view="data">
                     <h1 class="uppercase">Data</h1>
@@ -65,13 +65,13 @@
                     <p>Panopticon Security's proprietary system helps stores combat retail fraud with state of the art analytics on shoplifting behavior.</p>
                     <h3>Risk Layer</h3>
                     <p>Ranks the most probable shoplifters, with rich metadata to support human investigators. In 99.7% of successful arrests, the culprit is found in the top ten predicted suspects!</p>
-                    <a href="/secure/risk" class="button"><i class="fa fa-shopping-cart"></i> Open Risk Layer</a>
+                    <a href="./secure/risk" class="button"><i class="fa fa-shopping-cart"></i> Open Risk Layer</a>
                     <h3>Movement Layer</h3>
                     <p>Extracts positioning data from CCTV footage to provide a trail of where shoppers moved during their session, including visits to restrooms and fitting rooms.</p>
-                    <a href="/secure/movement" class="button"><i class="fa fa-male"></i> Open Movement Layer</a>
+                    <a href="./secure/movement" class="button"><i class="fa fa-male"></i> Open Movement Layer</a>
                     <h3>Attention Layer</h3>
                     <p>Integrates with eye-tracking sensors on store shelves to determine what merchandise shoppers looked at intently during their session. New from Panopticon Security!</p>
-                    <a href="/secure/attention" class="button"><i class="fa fa-eye"></i> Open Attention Layer</a>
+                    <a href="./secure/attention" class="button"><i class="fa fa-eye"></i> Open Attention Layer</a>
                     <hr>
                     <p><strong>Notice:</strong> Sharing data outside of this platform other than as part of sanctioned collaboration with law enforcement is a violation of corporate security policy.</p>
                 </div>
@@ -83,14 +83,14 @@
                         <li>
                             <span class="folder"><i class="fa fa-folder"></i> Security</span>
                             <ul class="nonlist">
-                                <li><a href="/document/floorplan" class="file"><i class="fa fa-file-pdf-o"></i> floor_plan.pdf</a></li>
-                                <li><a href="/document/policies" class="file"><i class="fa fa-file-pdf-o"></i> policy_review.pdf</a></li>
+                                <li><a href="./document/floorplan" class="file"><i class="fa fa-file-pdf-o"></i> floor_plan.pdf</a></li>
+                                <li><a href="./document/policies" class="file"><i class="fa fa-file-pdf-o"></i> policy_review.pdf</a></li>
                             </ul>
                         </li>
                         <li>
                             <span class="folder"><i class="fa fa-folder"></i> Personal</span>
                             <ul class="nonlist">
-                                <li><a href="/document/venn" class="file"><i class="fa fa-file-word-o"></i> venn_diagram.docx</a></li>
+                                <li><a href="./document/venn" class="file"><i class="fa fa-file-word-o"></i> venn_diagram.docx</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -103,10 +103,10 @@
                     <hr>
                     <p id="banner-removal" class="banner hidden">New Email: "Removal Request" (unlock with access code: SPEED)</p>
                     <ul class="nonlist">
-                        <li id="email-removal" class="hidden"><a href="/secure/removal" class="email"><i class="fa fa-lock"></i> Removal Request</a></li>
-                        <li><a href="/document/observations" class="email"><i class="fa fa-envelope-o"></i> Security Observations</a></li>
-                        <li><a href="/secure/vendor" class="email"><i class="fa fa-lock"></i> FWD: RE: Movement Layer Access Key</a></li>
-                        <li><a href="/secure/offer" class="email"><i class="fa fa-lock"></i> FWD: Attention: The Attention Layer is Here! (Special Offer Enclosed)</a></li>
+                        <li id="email-removal" class="hidden"><a href="./secure/removal" class="email"><i class="fa fa-lock"></i> Removal Request</a></li>
+                        <li><a href="./document/observations" class="email"><i class="fa fa-envelope-o"></i> Security Observations</a></li>
+                        <li><a href="./secure/vendor" class="email"><i class="fa fa-lock"></i> FWD: RE: Movement Layer Access Key</a></li>
+                        <li><a href="./secure/offer" class="email"><i class="fa fa-lock"></i> FWD: Attention: The Attention Layer is Here! (Special Offer Enclosed)</a></li>
                     </ul>
                     <hr>
                     <p><strong>Notice:</strong> Sharing emails outside of this platform other than as part of sanctioned collaboration with law enforcement is a violation of corporate security policy.</p>
@@ -147,7 +147,7 @@
                     <h1 class="uppercase">Secure Access</h1>
                     <p>This content is under a protected access policy. Please enter the access code to retrieve it.</p>
                     <div class="form">
-                        <input type="text" placeholder="access code"/>
+                        <input type="text" placeholder="access code" />
                         <button>Submit</button>
                     </div>
                     <p class="message"></p>
@@ -159,6 +159,6 @@
                 </div>
             </div>
         </div>
-        <script src="/assets/js/script.js" defer></script>
+        <script src="./assets/js/script.js" defer></script>
     </body>
 </html>

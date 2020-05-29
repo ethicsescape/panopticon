@@ -98,6 +98,7 @@ const GAME_PROPERTY = "panopticon_game_id";
 const USER_PROPERTY = "panopticon_user_id";
 const FIREBASE_ROOT = "panopticon";
 const API_ROOT = "https://panopticonsecurity.glitch.me";
+const SITE_ROOT = window.location.origin.indexOf("localhost") > -1 ? window.location.origin : `${window.location.origin}/panopticon`;
 
 const viewId = getViewId();
 console.log(viewId);
@@ -328,8 +329,8 @@ if (viewId === "decision") {
 }
 
 function doJoin() {
-    if (window.location.pathname.split("/").length >= 3) {
-        const linkGameId = window.location.pathname.split("/")[2];
+    if (window.location.href.indexOf("?game=") > -1) {
+        const linkGameId = window.location.href.split("?game=")[1];
         localStorage.setItem(GAME_PROPERTY, linkGameId);
     }
     const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -340,7 +341,7 @@ function doJoin() {
     document.querySelector("[data-view=join]").classList.remove("hidden");
     document.querySelector("#create-game").classList.add("hidden");
     const gameLinkEl = document.querySelector("#game-link");
-    gameLinkEl.innerText = `${window.location.origin}/join/${gameId}`;
+    gameLinkEl.innerText = `${SITE_ROOT}/join?game=${gameId}`;
     const lobbyStatusEl = document.querySelector("#lobby-status");
     if (db) {
         db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
@@ -389,7 +390,7 @@ function doJoin() {
             if (res.success) {
                 localStorage.removeItem(GAME_PROPERTY);
                 localStorage.removeItem(USER_PROPERTY);
-                window.location = window.location.origin;
+                window.location = SITE_ROOT;
             } else {
                 alert("Failed to leave game. Contact vingkan@gmail.com for help.");
                 console.error(res);
@@ -402,7 +403,7 @@ function doJoin() {
     startBtn.addEventListener("click", (e) => {
         fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
             if (res.success) {
-                window.location = `${window.location.origin}/case`;  
+                window.location = `${SITE_ROOT}/case`;  
             } else {
                 alert("Failed to start game. Contact vingkan@gmail.com for help.");
                 console.error(res);
@@ -423,7 +424,7 @@ if (viewId === "home") {
             fetch(`${API_ROOT}/api/game/create`).then((res) => {
                 if (res.success) {
                     localStorage.setItem(GAME_PROPERTY, res.gameId);
-                    window.location = `${window.location.origin}/join/${res.gameId}`;
+                    window.location = `${SITE_ROOT}/join?game=${res.gameId}`;
                     // doJoin(); 
                 } else {
                     alert("Failed to create game. Contact vingkan@gmail.com for help.");
