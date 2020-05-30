@@ -94,6 +94,14 @@ const FIREBASE_ROOT = "panopticon";
 const API_ROOT = "https://panopticonsecurity.glitch.me";
 const SITE_ROOT = window.location.origin.indexOf("localhost") > -1 ? window.location.origin : `${window.location.origin}/panopticon`;
 
+const validSuspects = {
+    "Shopper #1263": true,
+    "Shopper #6871": true,
+    "Shopper #6362": true,
+    "Shopper #1943": true,
+    "Shopper #2193": true
+};
+
 const viewId = getViewId();
 console.log(viewId);
 const viewEl = document.querySelector(`[data-view=${viewId}]`);
@@ -140,11 +148,14 @@ if (viewId === "secure") {
                     messageEl.classList.remove("failure");
                 }
                 messageEl.classList.add("success");
-                const isLink = res.content.indexOf("http") === 0;
-                if (isLink) {
+                const isExternalLink = res.content.indexOf("http") === 0;
+                const isInternalLink = res.content.indexOf("./") === 0;
+                if (isExternalLink || isInternalLink) {
                     const linkEl = document.createElement("a");
                     linkEl.href = res.content;
-                    linkEl.target = "_blank";
+                    if (isExternalLink) {
+                        linkEl.target = "_blank";
+                    }
                     linkEl.innerText = "Access granted. Click here.";
                     messageEl.innerText = "";
                     messageEl.appendChild(linkEl);
@@ -257,19 +268,6 @@ if (viewId === "activate") {
     }
 }
 
-const validSuspects = {
-    "Shopper #6712": true,
-    "Shopper #1263": true,
-    "Shopper #6950": true,
-    "Shopper #3679": true,
-    "Shopper #6871": true,
-    "Shopper #5564": true,
-    "Shopper #6362": true,
-    "Shopper #1943": true,
-    "Shopper #2193": true,
-    "Shopper #3491": true
-};
-
 if (viewId === "decision") {
     const select = document.querySelector("[data-view=decision] select");
     const textareaRat = document.querySelector("#rationale");
@@ -320,6 +318,134 @@ if (viewId === "decision") {
         });
     };
     button.addEventListener("click", processDecision);
+}
+
+function leftpad(d) {
+    const s = `${d}`;
+    if (s.length < 2) {
+        return `0${d}`;
+    }
+    return s;
+}
+
+function renderPoints(polyLineEl, points)  {
+    const s = polyLineEl.parentElement.clientWidth;
+    const pointData = points.map(({ x, y }) => `${x * s},${y * s}`).join(" ");
+    polyLineEl.setAttribute("points", pointData);
+}
+
+function renderPerson(polyLineEl, circleEl, step)  {
+    const s = polyLineEl.parentElement.clientWidth;
+    circleEl.setAttribute("cx", step.x * s);
+    circleEl.setAttribute("cy", step.y * s);
+    circleEl.setAttribute("r", 5);
+}
+
+function renderClock(clockEl, elapsedMs, settings = {})  {
+    const startHours = settings.startHours || 0;
+    const startMins = settings.startMins || 0;
+    const startSecs = settings.startSecs || 0;
+    const timeFactor = settings.timeFactor || 1;
+    const startHoursSecs = startHours * 60 * 60 || 0;
+    const startMinsSecs = startMins * 60 || 0;
+    const elapsedSecs = timeFactor * (elapsedMs / 1000);
+    const totalSecs = startHoursSecs + startMinsSecs + startSecs + elapsedSecs;
+    const hours = Math.floor(totalSecs / (60 * 60));
+    const mins = Math.floor((totalSecs % (60 * 60)) / (60));
+    const secs = Math.floor(totalSecs % 60);
+    const time = `${leftpad(hours)}:${leftpad(mins)}:${leftpad(secs)} PM`;
+    clockEl.innerText = time;
+}
+
+let replayInterval;
+
+function makeReplay(replayEl, personEl, clockEl, replay, settings) {
+    return () => {
+        clearInterval(replayInterval);
+        let seen = [];
+        let stepTime = Date.now();
+        let i = 0;
+        const startMs = Date.now();
+        let isReady = true;
+        replayInterval = setInterval(() => {
+            const elapsed = Date.now() - startMs;
+            renderClock(clockEl, elapsed, settings);
+            if (isReady) {
+                const step = replay[i];
+                seen.push(step);
+                renderPoints(replayEl, seen);
+                renderPerson(replayEl, personEl, step);
+                stepTime = Date.now();
+                i++;
+                if (i >= replay.length) {
+                    clearInterval(replayInterval);
+                }
+                isReady = false;
+            } else if (Date.now() - stepTime > replay[i].t) {
+                isReady = true;
+            }
+        }, 10);
+    }
+}
+
+function showMovementData(monitorEl, data) {
+    const timeFactor = 15;
+    const replayEl = monitorEl.querySelector("polyline");
+    const personEl = monitorEl.querySelector("circle");
+    const clockEl = monitorEl.querySelector(".clock");
+    const play = makeReplay(replayEl, personEl, clockEl, data.points, {
+        startHours: data.startHours,
+        startMins: data.startMins,
+        startSecs: data.startSecs,
+        timeFactor
+    });
+    monitorEl.parentElement.classList.remove("hidden");
+    const btn = document.querySelector("[data-view=movement] #play-btn");
+    btn.classList.remove("hidden");
+    btn.addEventListener("click", (e) => {
+        btn.innerText = "Restart";
+        play();
+    });
+}
+
+if (viewId === "movement") {
+    const monitorSize = 500;
+    const monitorEl = document.querySelector("[data-view=movement] .monitor");
+    monitorEl.style.width = `${monitorSize}px`;
+    monitorEl.style.height = `${monitorSize}px`;
+    const replayEl = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    monitorEl.querySelector("svg").appendChild(replayEl);
+    const personEl = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    monitorEl.querySelector("svg").appendChild(personEl);
+    const clockEl = monitorEl.querySelector(".clock");
+    const select = document.querySelector("[data-view=movement] select");
+    const btn = document.querySelector("[data-view=movement] #load-btn");
+    const moveMsgEl = document.querySelector("[data-view=movement] .message");
+    btn.addEventListener("click", (e) => {
+        clearInterval(replayInterval);
+        document.querySelector("[data-view=movement] #play-btn").innerText = "Play";
+        replayEl.setAttribute("points" , "");
+        personEl.setAttribute("r" , 0);
+        clockEl.innerText = "";
+        const suspectName = select.value;
+        if (!(suspectName in validSuspects)) {
+            showMessage(moveMsgEl, false, "Please select a valid shopper.");
+            return;
+        }
+        const suspectId = suspectName.split("#")[1];
+        console.log(suspectId);
+        fetch(`${API_ROOT}/api/movement/${suspectId}`).then((res) => {
+            if (res.success) {
+                showMessage(moveMsgEl, true, `Successfully loaded movement data for Shopper #${suspectId}.`);
+                showMovementData(monitorEl, res.data);
+            } else {
+                showMessage(moveMsgEl, false, `Failed to load movement data for Shopper #${suspectId}.`);
+            }
+        }).catch((err) => {
+            console.error(err);
+            showMessage(moveMsgEl, false, `Failed to load movement data for Shopper #${suspectId}.`);
+        });
+    });
 }
 
 function doJoin() {
