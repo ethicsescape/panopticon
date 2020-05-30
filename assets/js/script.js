@@ -138,9 +138,11 @@ if (viewId === "secure") {
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
     input.focus();
-    const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
-    input.value = storedCode;
-    showMessage(messageEl, true, "Clue already unlocked.");
+    if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
+        const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
+        input.value = storedCode;
+        showMessage(messageEl, true, "Clue already unlocked.");
+    }
     const accessDocument = () => {
         const accessCode = input.value;
         const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -451,6 +453,35 @@ if (viewId === "movement") {
     });
 }
 
+if (viewId === "lookup") {
+    const inputEl = document.querySelector("[data-view=lookup] input");
+    const btnEl = document.querySelector("[data-view=lookup] button");
+    const msgEl = document.querySelector("[data-view=lookup] .message");
+    const handleSubmit = () => {
+        const email = inputEl.value;
+        if (!email || email.indexOf("@") < 0) {
+            showMessage(msgEl, false, "Please enter a valid email address.");
+            return;
+        }
+        fetch(`${API_ROOT}/api/lookup?email=${email}`).then((res) => {
+            if (res.success) {
+                showMessage(msgEl, true, res.message);
+            } else {
+                showMessage(msgEl, false, res.message);
+            }
+        }).catch((err) => {
+            console.error(err);
+            showMessage(msgEl, false, "Lookup failed.");
+        });
+    };
+    btnEl.addEventListener("click", handleSubmit);
+    inputEl.addEventListener("keypress", (e) => {
+        if (e.keyCode === 13) {
+            handleSubmit();
+        }
+    });
+}
+
 function doJoin() {
     if (window.location.href.indexOf("?game=") > -1) {
         const linkGameId = window.location.href.split("?game=")[1];
@@ -578,6 +609,7 @@ const sidebarClues = [
     "vendor",
     "offer",
     "removal",
+    "lookup",
 ];
 
 function updateGame() {
