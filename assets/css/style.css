@@ -166,10 +166,18 @@ p {
     
     .sidebar .clue {
         display: inline-block;
+        position: relative;
+        margin: 0 5px;
     }
     
     .sidebar .timer {
         font-size: 28px;
+    }
+
+    .sidebar .clue.unlocked:hover span {
+        position: absolute;
+        top: 0;
+        left: 5px;
     }
     
 }

@@ -138,6 +138,9 @@ if (viewId === "secure") {
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
     input.focus();
+    const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
+    input.value = storedCode;
+    showMessage(messageEl, true, "Clue already unlocked.");
     const accessDocument = () => {
         const accessCode = input.value;
         const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -510,6 +513,9 @@ function doJoin() {
             if (res.success) {
                 localStorage.removeItem(GAME_PROPERTY);
                 localStorage.removeItem(USER_PROPERTY);
+                sidebarClues.forEach((clueId) => {
+                    localStorage.removeItem(`panopticon_clue_${clueId}`);
+                });
                 window.location = SITE_ROOT;
             } else {
                 alert("Failed to leave game. Contact vingkan@gmail.com for help.");
@@ -620,7 +626,11 @@ function updateGame() {
                 clueEl.appendChild(tagEl);
                 clueEl.classList.add("clue");
                 if (isUnlocked) {
+                    localStorage.setItem(`panopticon_clue_${clueId}`, unlockedMap[clueId]);
                     clueEl.classList.add("unlocked");
+                    clueEl.addEventListener("click", (e) => {
+                        window.location = `${SITE_ROOT}/secure?c=${clueId}`;
+                    });
                 }
                 cluesEl.append(clueEl);
             });
