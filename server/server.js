@@ -59,31 +59,7 @@ app.use(cors({
 app.use(express.static("public"));
 
 app.get("/", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/case", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/data", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/files", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/email", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/decision", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
-});
-
-app.get("/activate", (request, response) => {
-    response.redirect("https://ethicsescape.github.io/panopticon");
+    response.send({ success: true, message: "You have reached a Panopticon game server." });
 });
 
 const rawConfig = fs.readFileSync("./config.json");
@@ -92,10 +68,6 @@ const PROTECTED_CLUES = config.protected;
 const FREE_CLUES = config.free;
 
 app.get("/secure/:clueid", (request, response) => {
-    response.sendFile(__dirname + "/views/app.html");
-});
-
-app.get("/document/:clueid", (request, response) => {
     response.sendFile(__dirname + "/views/app.html");
 });
 
@@ -123,29 +95,6 @@ app.get("/access/:clueid", (request, response) => {
         }
     } else {
         message = `Could not find secure content. Invalid ID: ${clueId}`;
-    }
-    response.send({ success, message, content });
-});
-
-app.get("/load/:clueid", (request, response) => {
-    const clueId = request.params.clueid;
-    let success = false;
-    let message = "";
-    let content = "";
-    if (!(clueId in PROTECTED_CLUES)) {
-        if (clueId in FREE_CLUES) {
-                try {
-                    content = fs.readFileSync(`./content/${clueId}.md`).toString();
-                    success = true;
-                    message = "Access granted.";
-                } catch (e) {
-                    message = `Failed to load content. Contact game master with ID: ${clueId}`;
-                }
-        } else {
-            message = `Could not find content. Invalid ID: ${clueId}`;
-        }
-    } else {
-        message = `This content is under a protected access policy. ID: ${clueId}`;
     }
     response.send({ success, message, content });
 });
@@ -290,7 +239,6 @@ app.get("/api/game/toggle/:gameid", (request, response) => {
         });
     });
 });
-
 
 const listener = app.listen(process.env.PORT, () => {
     console.log("Your app is listening on port " + listener.address().port);
