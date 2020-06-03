@@ -113,24 +113,6 @@ if (tabEl) {
     tabEl.classList.add("selected");  
 }
 
-if (viewId === "document") {
-    const clueId = getClueId();
-    console.log(clueId);
-    fetch(`${API_ROOT}/load/${clueId}`).then((res) => {
-        if (res.success) {
-            showDocumentViewer(res.content); 
-        } else {
-            const errorEl = document.querySelector("[data-view=error]");
-            const messageEl = errorEl.querySelector(".message");
-            messageEl.classList.add("failure");
-            messageEl.innerText = res.message;
-            errorEl.classList.remove("hidden");
-        }
-    }).catch((err) => {
-        console.log(err);
-    });
-}
-
 if (viewId === "secure") {
     const clueId = getClueId();
     console.log(clueId);
