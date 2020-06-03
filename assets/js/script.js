@@ -29,6 +29,23 @@ function fetch(url) {
     });
 }
 
+function getAPIRoot(forceProduction = false) {
+    const onLocal = window.location.origin.indexOf("localhost") > -1;
+    if(forceProduction || !onLocal) {
+        return "https://panopticonsecurity.glitch.me";
+    } else {
+        return "http://localhost:3000";
+    }
+}
+
+function getSiteRoot() {
+    if(window.location.origin.indexOf("localhost") > -1) {
+        return window.location.origin;
+    } else { 
+        return `${window.location.origin}/panopticon`
+    }
+}
+
 function showDocumentViewer(content) {
     const contentEl = document.querySelector("[data-view=viewer]");
     const converter = new showdown.Converter({
@@ -88,11 +105,12 @@ if (window.firebase) {
 }
 const db = window.firebase ? firebase.database() : false;
 
+const FORCE_PROD = false;
 const GAME_PROPERTY = "panopticon_game_id";
 const USER_PROPERTY = "panopticon_user_id";
 const FIREBASE_ROOT = "panopticon";
-const API_ROOT = "https://panopticonsecurity.glitch.me";
-const SITE_ROOT = window.location.origin.indexOf("localhost") > -1 ? window.location.origin : `${window.location.origin}/panopticon`;
+const API_ROOT = getAPIRoot(FORCE_PROD);
+const SITE_ROOT = getSiteRoot();
 
 const validSuspects = {
     "Shopper #1263": true,

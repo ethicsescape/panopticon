@@ -1,0 +1,21 @@
+{
+  "protected": {
+    "risk": "krichev",
+    "movement": "fclt77",
+    "attention": "lyon",
+    "vendor": "dmw0723",
+    "offer": "fanon",
+    "removal": "speed",
+    "lookup": "fishing",
+    "resolution": "vick"
+  },
+  "free": {
+    "briefing": true,
+    "floorplan": true,
+    "observations": true,
+    "venn": true,
+    "faq": true,
+    "policies": true,
+    "screenshot": true
+  }
+}
