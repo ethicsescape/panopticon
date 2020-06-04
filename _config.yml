@@ -3,6 +3,8 @@ encoding: UTF-8
 kramdown:
     smart_quotes: ["apos", "apos", "quot", "quot"]
 collections:
+  case:
+    output: true
   document:
     output: true
   secure:

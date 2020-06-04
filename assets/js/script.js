@@ -1,7 +1,5 @@
 /*
  global window
- global showdown
- global html_beautify
  global encodeURIComponent
  global firebase
  */
@@ -46,16 +44,6 @@ function getSiteRoot() {
     }
 }
 
-function showDocumentViewer(content) {
-    const contentEl = document.querySelector("[data-view=viewer]");
-    const converter = new showdown.Converter({
-        tables: true,
-    });
-    const html = converter.makeHtml(content);
-    contentEl.innerHTML = html_beautify(html);
-    contentEl.classList.remove("hidden");
-}
-
 function showMessage(messageEl, isSuccess, message) {
     if (isSuccess) {
         if (messageEl.classList.contains("failure")) {
@@ -71,15 +59,15 @@ function showMessage(messageEl, isSuccess, message) {
     messageEl.innerText = message;
 }
 
-function getViewId() {
+function getViewId(offset = 0) {
     if (window.location.origin.indexOf("ethicsescape.github.io") > -1) {
-        if (window.location.pathname.split("/")[2]) {
-            return window.location.pathname.split("/")[2];
+        if (window.location.pathname.split("/")[2 + offset]) {
+            return window.location.pathname.split("/")[2 + offset];
         }
         return "home";
     }
-    if (window.location.pathname.split("/")[1]) {
-        return window.location.pathname.split("/")[1];
+    if (window.location.pathname.split("/")[1 + offset]) {
+        return window.location.pathname.split("/")[1 + offset];
     }
     return "home";
 }
@@ -130,19 +118,16 @@ const validSuspects = {
 fetch(API_ROOT);
 
 const viewId = getViewId();
+const tabId = getViewId(offset=1);
 console.log(viewId);
-const viewEl = document.querySelector(`[data-view=${viewId}]`);
-const tabEl = document.querySelector(`[data-tab=${viewId}]`);
-if (viewEl) {
-    viewEl.classList.remove("hidden");  
-}
+console.log(tabId);
+const tabEl = document.querySelector(`[data-tab='${tabId}']`);
 if (tabEl) {
     tabEl.classList.add("selected");  
 }
 
 if (viewId === "secure") {
     const clueId = document.querySelector("#clue-id").innerText;
-    console.log(clueId);
     const input = document.querySelector("[data-view=secure] input");
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
@@ -187,7 +172,7 @@ if (viewId === "secure") {
     });
 }
 
-if (viewId === "activate") {
+if (tabId === "activate") {
     const input = document.querySelector("[data-view=activate] input");
     const button = document.querySelector("[data-view=activate] button");
     const messageEl = document.querySelector("[data-view=activate] .message");
@@ -267,7 +252,7 @@ if (viewId === "activate") {
     }
 }
 
-if (viewId === "decision") {
+if (tabId === "decision") {
     const select = document.querySelector("[data-view=decision] select");
     const textareaRat = document.querySelector("#rationale");
     const textareaRec = document.querySelector("#recommendations");
@@ -434,7 +419,7 @@ if (viewId === "replay") {
     showMovementData(monitorEl, replayData);
 }
 
-if (viewId === "lookup") {
+if (tabId === "lookup") {
     const inputEl = document.querySelector("[data-view=lookup] input");
     const btnEl = document.querySelector("[data-view=lookup] button");
     const msgEl = document.querySelector("[data-view=lookup] .message");
@@ -541,7 +526,7 @@ function doJoin() {
     startBtn.addEventListener("click", (e) => {
         fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
             if (res.success) {
-                window.location = `${SITE_ROOT}/case`;  
+                window.location = `${SITE_ROOT}/case/info`;  
             } else {
                 alert("Failed to start game. Contact vingkan@gmail.com for help.");
                 console.error(res);
@@ -648,11 +633,15 @@ function updateGame() {
                 cluesEl.append(clueEl);
             });
         }
-        if ("risk" in unlockedMap && "movement" in unlockedMap && "attention" in unlockedMap) {
+        const hasPreReqs = "risk" in unlockedMap && "movement" in unlockedMap && "attention" in unlockedMap;
+        const isOpened = "removal" in unlockedMap;
+        if (hasPreReqs && !isOpened) {
             const hiddenClueBanner = document.querySelector("#banner-removal");
             const hiddenClueEmail = document.querySelector("#email-removal");
-            if (hiddenClueBanner && hiddenClueEmail) {
+            if (hiddenClueBanner) {
                 hiddenClueBanner.classList.remove("hidden");
+            }
+            if (hiddenClueEmail) {
                 hiddenClueEmail.classList.remove("hidden");
             }
         }

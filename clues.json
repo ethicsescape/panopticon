@@ -6,7 +6,7 @@
     },
     "movement": {
         "password": "fclt77",
-        "document": "../movement",
+        "document": "../case/movement",
         "preview": "Movement Layer"
     },
     "attention": {
@@ -31,7 +31,7 @@
     },
     "lookup": {
         "password": "fishing",
-        "document": "../lookup",
+        "document": "../case/lookup",
         "preview": "Reverse Email Lookup Tool"
     },
     "resolution": {

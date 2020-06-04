@@ -1,5 +1,5 @@
 ---
-layout: document
+layout: case
 ---
 # FWD: RE: Movement Layer Access Key
 

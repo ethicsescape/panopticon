@@ -1,5 +1,5 @@
 ---
-layout: document
+layout: case
 ---
 # Policy Review
 

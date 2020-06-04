@@ -1,5 +1,5 @@
 ---
-layout: document
+layout: case
 ---
 # Frequently Asked Questions
 

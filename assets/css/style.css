@@ -356,7 +356,8 @@ p {
     background: green;
     color: white;
     padding: 10px;
-    margin: 10px;
+    margin: 0;
+    margin-bottom: 10px;
 }
 
 /* Clues */

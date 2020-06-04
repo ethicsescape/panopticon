@@ -105,6 +105,7 @@ dist
 
 # Jekyll Site
 _site/*
+.jekyll-metadata
 
 # Server
 server/node_modules/
