@@ -126,6 +126,9 @@ const validSuspects = {
     "Shopper #2193": true
 };
 
+// Wake up game server
+fetch(API_ROOT);
+
 const viewId = getViewId();
 console.log(viewId);
 const viewEl = document.querySelector(`[data-view=${viewId}]`);
