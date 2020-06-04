@@ -398,6 +398,11 @@ p {
 
 /* Movement Layer */
 
+.replay-holder {
+    width: 500px;
+    margin: 0 auto;
+}
+
 .monitor {
     display: block;
     margin: 0 auto;

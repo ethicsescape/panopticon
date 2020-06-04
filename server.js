@@ -79,18 +79,6 @@ app.get("/api/unlock/:clueid", (request, response) => {
     }
 });
 
-app.get("/api/movement/:suspectid", (request, response) => {
-    const suspectId = request.params.suspectid;
-    try {
-        const rawData = fs.readFileSync(`./movement/${suspectId}.json`);
-        const data = JSON.parse(rawData);
-        response.send({ success: true, data });
-    } catch (e) {
-        const message = `Failed to load movement data for Shopper #${suspectId}.`;
-        response.send({ success: false, message });
-    }
-});
-
 app.get("/api/lookup", (request, response) => {
     const email = request.query.email;
     if (email && email.toLowerCase() === "topquarterback95@gmail.com") {

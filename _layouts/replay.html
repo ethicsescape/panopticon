@@ -9,8 +9,8 @@
         <link id="favicon" rel="icon" href="https://cdn.glitch.com/4520b2f3-4c55-4f09-802e-32d673d80432%2Flogo-white.png?v=1590295948241" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        <link rel="stylesheet" href="./assets/css/reset.css">
-        <link rel="stylesheet" href="./assets/css/style.css">
+        <link rel="stylesheet" href="../assets/css/reset.css">
+        <link rel="stylesheet" href="../assets/css/style.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js" defer></script>
         <script src="https://cdn.rawgit.com/beautify-web/js-beautify/v1.6.3/js/lib/beautify-html.js" defer></script>
         <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
@@ -18,12 +18,12 @@
     </head>
     <body>
         <div class="header">
-            <a href="./" class="tab"><img alt="Panopticon Security Logo" src="./assets/img/logo-white.png" /> Panopticon Security</a>
-            <a href="./case" class="tab" data-tab="case"><i class="fa fa-briefcase"></i> Case</a>
-            <a href="./data" class="tab" data-tab="data"><i class="fa fa-signal"></i> Data</a>
-            <a href="./files" class="tab" data-tab="files"><i class="fa fa-folder-open"></i> Files</a>
-            <a href="./email" class="tab" data-tab="email"><i class="fa fa-envelope"></i> Email</a>
-            <a href="./decision" class="tab" data-tab="email"><i class="fa fa-gavel"></i> Decision</a>
+            <a href="../" class="tab"><img alt="Panopticon Security Logo" src="../assets/img/logo-white.png" /> Panopticon Security</a>
+            <a href="../case" class="tab" data-tab="case"><i class="fa fa-briefcase"></i> Case</a>
+            <a href="../data" class="tab" data-tab="data"><i class="fa fa-signal"></i> Data</a>
+            <a href="../files" class="tab" data-tab="files"><i class="fa fa-folder-open"></i> Files</a>
+            <a href="../email" class="tab" data-tab="email"><i class="fa fa-envelope"></i> Email</a>
+            <a href="../decision" class="tab" data-tab="email"><i class="fa fa-gavel"></i> Decision</a>
         </div>
         <div class="app">
             <div class="sidebar">
@@ -31,23 +31,22 @@
                 <div class="clues"></div>
             </div>
             <div class="page">
-                <div class="content hidden" data-view="movement">
-                    <h1 class="uppercase">Movement Layer</h1>
-                    <p>Select a shopper to view their movement data.</p>
-                    <hr>
-                    <ul class="nonlist">
-                        {% assign replays = site.replay | sort: "start" | reverse %}
-                        {% for replay in replays %}
-                        <li>
-                            <span>{{ replay.start }}</span>
-                            <a href="./replay/{{ replay.slug }}"><i class="fa fa-file-video-o"></i> Shopper #{{ replay.slug }}</a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    <hr>
+                <div class="content replay-holder" data-view="replay">
+                    <h1 class="uppercase">Movement Replay</h1>
+                    <p class="message"></p>
+                    <button id="play-btn" class="button primary hidden">Play</button>
+                    <div class="hidden">
+                        <div class="monitor">
+                            <img class="floorplan" src="../assets/img/floor_plan_quadrant.png" />
+                            <svg></svg>
+                            <div class="clock"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div id="ox" class="hidden">{{ page.slug }}</div>
+            <div id="leopard" class="hidden">{{ page.content }}</div>
         </div>
-        <script src="./assets/js/script.js" defer></script>
+        <script src="../assets/js/script.js" defer></script>
     </body>
 </html>

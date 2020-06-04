@@ -396,7 +396,7 @@ function showMovementData(monitorEl, data) {
         timeFactor
     });
     monitorEl.parentElement.classList.remove("hidden");
-    const btn = document.querySelector("[data-view=movement] #play-btn");
+    const btn = document.querySelector("[data-view=replay] #play-btn");
     btn.classList.remove("hidden");
     btn.addEventListener("click", (e) => {
         btn.innerText = "Restart";
@@ -404,9 +404,9 @@ function showMovementData(monitorEl, data) {
     });
 }
 
-if (viewId === "movement") {
+if (viewId === "replay") {
     const monitorSize = 500;
-    const monitorEl = document.querySelector("[data-view=movement] .monitor");
+    const monitorEl = document.querySelector("[data-view=replay] .monitor");
     monitorEl.style.width = `${monitorSize}px`;
     monitorEl.style.height = `${monitorSize}px`;
     const replayEl = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
@@ -414,34 +414,21 @@ if (viewId === "movement") {
     const personEl = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     monitorEl.querySelector("svg").appendChild(personEl);
     const clockEl = monitorEl.querySelector(".clock");
-    const select = document.querySelector("[data-view=movement] select");
-    const btn = document.querySelector("[data-view=movement] #load-btn");
-    const moveMsgEl = document.querySelector("[data-view=movement] .message");
-    btn.addEventListener("click", (e) => {
-        clearInterval(replayInterval);
-        document.querySelector("[data-view=movement] #play-btn").innerText = "Play";
-        replayEl.setAttribute("points" , "");
-        personEl.setAttribute("r" , 0);
-        clockEl.innerText = "";
-        const suspectName = select.value;
-        if (!(suspectName in validSuspects)) {
-            showMessage(moveMsgEl, false, "Please select a valid shopper.");
-            return;
-        }
-        const suspectId = suspectName.split("#")[1];
-        console.log(suspectId);
-        fetch(`${API_ROOT}/api/movement/${suspectId}`).then((res) => {
-            if (res.success) {
-                showMessage(moveMsgEl, true, `Successfully loaded movement data for Shopper #${suspectId}.`);
-                showMovementData(monitorEl, res.data);
-            } else {
-                showMessage(moveMsgEl, false, `Failed to load movement data for Shopper #${suspectId}.`);
-            }
-        }).catch((err) => {
-            console.error(err);
-            showMessage(moveMsgEl, false, `Failed to load movement data for Shopper #${suspectId}.`);
-        });
-    });
+    const select = document.querySelector("[data-view=replay] select");
+    const btn = document.querySelector("[data-view=replay] #load-btn");
+    const moveMsgEl = document.querySelector("[data-view=replay] .message");
+
+    clearInterval(replayInterval);
+    document.querySelector("[data-view=replay] #play-btn").innerText = "Play";
+    replayEl.setAttribute("points" , "");
+    personEl.setAttribute("r" , 0);
+    clockEl.innerText = "";
+    const suspectId = document.querySelector("#ox").innerText;
+    console.log(suspectId);
+    const rawReplayData = document.querySelector("#leopard").innerText;
+    const replayData = JSON.parse(rawReplayData);
+    showMessage(moveMsgEl, true, `Successfully loaded movement data for Shopper #${suspectId}.`);
+    showMovementData(monitorEl, replayData);
 }
 
 if (viewId === "lookup") {
@@ -652,7 +639,7 @@ function updateGame() {
                     localStorage.setItem(`panopticon_clue_${clueId}`, unlockedMap[clueId]);
                     clueEl.classList.add("unlocked");
                     clueEl.addEventListener("click", (e) => {
-                        window.location = `${SITE_ROOT}/secure?c=${clueId}`;
+                        window.location = `${SITE_ROOT}/secure/${clueId}`;
                     });
                 }
                 cluesEl.append(clueEl);
