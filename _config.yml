@@ -8,7 +8,11 @@ collections:
   secure:
     output: true
 exclude:
+  - LICENSE
+  - README.md
   - node_modules/*
   - package-lock.json
   - package.json
-  - server/*
+  - server.js
+  - build.js
+  - clues.json

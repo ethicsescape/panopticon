@@ -107,5 +107,5 @@ dist
 _site/*
 
 # Server
-server/node_modules/*
+server/node_modules/
 server/.env
