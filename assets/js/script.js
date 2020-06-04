@@ -32,7 +32,7 @@ function fetch(url) {
 function getAPIRoot(forceProduction = false) {
     const onLocal = window.location.origin.indexOf("localhost") > -1;
     if(forceProduction || !onLocal) {
-        return "https://panopticonsecurity.glitch.me";
+        return "https://panopticonsecurity.herokuapp.com";
     } else {
         return "http://localhost:3000";
     }
@@ -110,10 +110,11 @@ if (window.firebase) {
 }
 const db = window.firebase ? firebase.database() : false;
 
-const FORCE_PROD = false;
+const PROD_PROPERTY = "panopticon_force_prod";
 const GAME_PROPERTY = "panopticon_game_id";
 const USER_PROPERTY = "panopticon_user_id";
 const FIREBASE_ROOT = "panopticon";
+const FORCE_PROD = localStorage.hasOwnProperty(PROD_PROPERTY);
 const API_ROOT = getAPIRoot(FORCE_PROD);
 const SITE_ROOT = getSiteRoot();
 
