@@ -29,7 +29,7 @@ function fetch(url) {
 
 function getAPIRoot(forceProduction = false) {
     const onLocal = window.location.origin.indexOf("localhost") > -1;
-    if(forceProduction || !onLocal) {
+    if (forceProduction || !onLocal) {
         return "https://panopticonsecurity.herokuapp.com";
     } else {
         return "http://localhost:3000";
@@ -448,9 +448,27 @@ if (tabId === "lookup") {
     });
 }
 
+function doIntro() {
+    const gameId = localStorage.getItem(GAME_PROPERTY);
+    const startBtn = document.querySelector("#start-game");
+    startBtn.addEventListener("click", (e) => {
+        fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
+            if (res.success) {
+                window.location = `${SITE_ROOT}/case/info`;  
+            } else {
+                alert("Failed to start game. Contact vingkan@gmail.com for help.");
+                console.error(res);
+            }
+        }).catch((err) => {
+            alert("Failed to start game. Contact vingkan@gmail.com for help.");
+            console.error(err);
+        });
+    });
+}
+
 function doJoin() {
-    if (window.location.href.indexOf("?game=") > -1) {
-        const linkGameId = window.location.href.split("?game=")[1];
+    if (window.location.href.indexOf("?join=") > -1) {
+        const linkGameId = window.location.href.split("?join=")[1].split("&")[0];
         localStorage.setItem(GAME_PROPERTY, linkGameId);
     }
     const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -461,7 +479,7 @@ function doJoin() {
     document.querySelector("[data-view=join]").classList.remove("hidden");
     document.querySelector("#create-game").classList.add("hidden");
     const gameLinkEl = document.querySelector("#game-link");
-    gameLinkEl.innerText = `${SITE_ROOT}/join?game=${gameId}`;
+    gameLinkEl.innerText = `${SITE_ROOT}?join=${gameId}`;
     const lobbyStatusEl = document.querySelector("#lobby-status");
     if (db) {
         db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
@@ -474,7 +492,6 @@ function doJoin() {
             showMessage(lobbyStatusEl, gameStarted || numberOfUsers > 1, `${gameMessage} ${userMessage}`);
         });
     }
-    const startBtn = document.querySelector("#start-game");
     const leaveBtn = document.querySelector("#leave-game");
     if (!localStorage.hasOwnProperty(USER_PROPERTY)) {
         fetch(`${API_ROOT}/api/game/join/${gameId}?new=true`).then((res) => {
@@ -523,19 +540,6 @@ function doJoin() {
             console.error(err);
         });
     });
-    startBtn.addEventListener("click", (e) => {
-        fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
-            if (res.success) {
-                window.location = `${SITE_ROOT}/case/info`;  
-            } else {
-                alert("Failed to start game. Contact vingkan@gmail.com for help.");
-                console.error(res);
-            }
-        }).catch((err) => {
-            alert("Failed to start game. Contact vingkan@gmail.com for help.");
-            console.error(err);
-        });
-    });
 }
 
 if (viewId === "home") {
@@ -547,7 +551,7 @@ if (viewId === "home") {
             fetch(`${API_ROOT}/api/game/create`).then((res) => {
                 if (res.success) {
                     localStorage.setItem(GAME_PROPERTY, res.gameId);
-                    window.location = `${SITE_ROOT}/join?game=${res.gameId}`;
+                    window.location = `${SITE_ROOT}?join=${res.gameId}`;
                     // doJoin(); 
                 } else {
                     alert("Failed to create game. Contact vingkan@gmail.com for help.");
@@ -561,8 +565,8 @@ if (viewId === "home") {
     }
 }
 
-if (viewId === "join") {
-    doJoin();
+if (viewId === "intro") {
+    doIntro();
 }
 
 const limitMins = 59;

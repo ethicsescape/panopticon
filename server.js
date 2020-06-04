@@ -72,9 +72,9 @@ app.get("/api/unlock/:clueid", (request, response) => {
     const gameId = request.query.game;
     if (gameId) {
         db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`).set(code).then(() => {
-            res.send({ success: true });
+            response.send({ success: true });
         }).catch((err) => {
-            res.send({ success: false, error: err });
+            response.send({ success: false, error: err });
         });
     }
 });
