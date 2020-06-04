@@ -5,6 +5,8 @@ kramdown:
 collections:
   document:
     output: true
+  secure:
+    output: true
 exclude:
   - node_modules/*
   - package-lock.json

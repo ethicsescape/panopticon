@@ -84,11 +84,16 @@ function getViewId() {
     return "home";
 }
 
-function getClueId() {
-    if (window.location.href.indexOf("?c=") > -1) {
-        return window.location.href.split("?c=")[1];
-    }
-    return undefined;
+function tryPassword(entered, expected, ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (entered.toLowerCase() === expected.toLowerCase()) {
+                resolve({ success: true, message: `Access granted.` });
+            } else {
+                resolve({ success: false, message: `Wrong password.` });
+            }
+        }, ms);
+    });
 }
 
 if (window.firebase) {
@@ -132,7 +137,7 @@ if (tabEl) {
 }
 
 if (viewId === "secure") {
-    const clueId = getClueId();
+    const clueId = document.querySelector("#clue-id").innerText;
     console.log(clueId);
     const input = document.querySelector("[data-view=secure] input");
     const button = document.querySelector("[data-view=secure] button");
@@ -143,47 +148,32 @@ if (viewId === "secure") {
         input.value = storedCode;
         showMessage(messageEl, true, "Clue already unlocked.");
     }
+    let attempts = 0;
     const accessDocument = () => {
-        const accessCode = input.value;
+        const accessCode = input.value.toLowerCase();
+        const elephant = atob(document.querySelector("#elephant").innerText).toLowerCase();
+        const viper = decodeURI(atob(document.querySelector("#viper").innerText));
         const gameId = localStorage.getItem(GAME_PROPERTY);
-        fetch(`${API_ROOT}/access/${clueId}?code=${accessCode}&game=${gameId}`).then((res) => {
-            console.log(res);
-            if (res.success) {
-                if (messageEl.classList.contains("failure")) {
-                    messageEl.classList.remove("failure");
-                }
-                messageEl.classList.add("success");
-                const isExternalLink = res.content.indexOf("http") === 0;
-                const isInternalLink = res.content.indexOf("./") === 0;
-                if (isExternalLink || isInternalLink) {
-                    const linkEl = document.createElement("a");
-                    linkEl.href = res.content;
-                    if (isExternalLink) {
-                        linkEl.target = "_blank";
-                    }
-                    linkEl.innerText = "Access granted. Click here.";
-                    messageEl.innerText = "";
-                    messageEl.appendChild(linkEl);
-                } else {
-                    let countdown = 3;
-                    messageEl.innerText = `Access granted, loading in ${countdown}...`;
-                    const interval = setInterval(() => {
-                        countdown--;
-                        if (countdown === 0) {
-                            clearInterval(interval);
-                            viewEl.classList.add("hidden");
-                            showDocumentViewer(res.content);  
-                        }
-                        messageEl.innerText = `Access granted, loading in ${countdown}...`;
-                    }, 1000);
-                }
-            } else {
-                messageEl.classList.add("failure");
-                messageEl.innerText = res.message;
+        attempts++;
+        if (accessCode === elephant) {
+            fetch(`${API_ROOT}/api/unlock/${clueId}?code=${accessCode}&game=${gameId}`);
+            if (messageEl.classList.contains("failure")) {
+                messageEl.classList.remove("failure");
             }
-        }).catch((err) => {
-            console.log(err);
-        });
+            messageEl.classList.add("success");
+            const isExternalLink = viper.indexOf("http") === 0;
+            const linkEl = document.createElement("a");
+            linkEl.href = viper;
+            if (isExternalLink) {
+                linkEl.target = "_blank";
+            }
+            linkEl.innerText = "Access granted. Click here.";
+            messageEl.innerText = "";
+            messageEl.appendChild(linkEl);
+        } else {
+            messageEl.classList.add("failure");
+            messageEl.innerText = `Incorrect password (${attempts} attempts).`;
+        }
     }
     button.addEventListener("click", accessDocument);
     input.addEventListener("keypress", (e) => {

@@ -62,45 +62,21 @@ app.get("/", (request, response) => {
     response.send({ success: true, message: "You have reached a Panopticon game server." });
 });
 
-const rawConfig = fs.readFileSync("./config.json");
-const config = JSON.parse(rawConfig);
-const PROTECTED_CLUES = config.protected;
-const FREE_CLUES = config.free;
-
-app.get("/secure/:clueid", (request, response) => {
-    response.sendFile(__dirname + "/views/app.html");
+app.get("/join/:gameid", (request, response) => {
+    response.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/access/:clueid", (request, response) => {
+app.get("/api/unlock/:clueid", (request, response) => {
     const clueId = request.params.clueid;
     const code = request.query.code.toLowerCase();
     const gameId = request.query.game;
-    let success = false;
-    let message = "";
-    let content = "";
-    if (clueId in PROTECTED_CLUES) {
-        if (PROTECTED_CLUES[clueId].toLowerCase() === code) {
-            try {
-                content = fs.readFileSync(`./content/${clueId}.md`).toString();
-                success = true;
-                message = "Access granted.";
-                if (gameId) {
-                    db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`).set(code);
-                }
-            } catch (e) {
-                message = `Failed to load content. Contact game master with ID: ${clueId}`;
-            }
-        } else {
-            message = "Incorrect access code.";
-        }
-    } else {
-        message = `Could not find secure content. Invalid ID: ${clueId}`;
+    if (gameId) {
+        db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`).set(code).then(() => {
+            res.send({ success: true });
+        }).catch((err) => {
+            res.send({ success: false, error: err });
+        });
     }
-    response.send({ success, message, content });
-});
-
-app.get("/join/:gameid", (request, response) => {
-    response.sendFile(__dirname + "/views/index.html");
 });
 
 app.get("/api/movement/:suspectid", (request, response) => {
