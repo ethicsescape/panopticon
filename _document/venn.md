@@ -5,7 +5,7 @@ layout: document
 
 Today, I read an interesting article by Dr. Shoshana Zuboff about surveillance capitalism:
 
-[https://www.theguardian.com/commentisfree/2019/jul/02/facebook-google-data-change-our-behaviour-democracy](https://www.theguardian.com/commentisfree/2019/jul/02/facebook-google-data-change-our-behaviour-democracy)
+<a target="_blank" href="https://www.theguardian.com/commentisfree/2019/jul/02/facebook-google-data-change-our-behaviour-democracy">https://www.theguardian.com/commentisfree/2019/jul/02/facebook-google-data-change-our-behaviour-democracy</a>
 
 I made a venn diagram based on that article, which I think is pretty cool. Anyway, I also came up with a clever way to remember the password to an important email...
 
