@@ -27,6 +27,12 @@
         <div class="app">
             <div class="sidebar">
                 <div class="timer"></div>
+                <div class="mission hidden">
+                    <div class="clue unlocked">
+                        <i class="fa"></i>
+                        <span>mission</span>
+                    </div>
+                </div>
                 <div class="clues"></div>
             </div>
             <div class="page">
@@ -51,6 +57,16 @@
             </div>
             <div id="ox" class="hidden">{{ page.slug }}</div>
             <div id="leopard" class="hidden">{{ page.content }}</div>
+            <div class="cover hidden">
+                <div class="popup" data-state="empty">
+                    <h1 class="uppercase">
+                        <i class="fa"></i>
+                        <br>
+                        <span></span>
+                    </h1>
+                    <p></p>
+                </div>
+            </div>
         </div>
         <script src="../assets/js/script.js" defer></script>
     </body>

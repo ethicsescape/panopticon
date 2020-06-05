@@ -149,7 +149,7 @@ function setScreenName(gameId, userId, name, override) {
                     agg[nameMap[uid]] = uid;
                     return agg;
                 }, {});
-                if (screenName in invertedMap) {
+                if (screenName in invertedMap && invertedMap[screenName] !== userId) {
                     reject(`Name ${screenName} is already taken.`);
                 } else if (override) {
                     ref.set(screenName).then(resolve).catch(reject);  
@@ -225,7 +225,7 @@ app.get("/api/mission/toggle/:gameid", (request, response) => {
                     }
                 } else if (missionId in invertedMap) {
                     response.send({ success: false, message: "Someone else has already taken that mission." });
-                } else if (!(userId in  val)) {
+                } else if (!(userId in val) || !hasStarted) {
                     ref.set(missionId).then(() => {
                         response.send({ success: true });
                     }).catch((err) => {

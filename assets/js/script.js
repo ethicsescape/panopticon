@@ -116,17 +116,33 @@ const validSuspects = {
 
 const MISSIONS = [
     {
-        id: "conscience",
-        name: "Conscience",
-        suggest: "A good mission for someone empathetic.",
-        icon: "lock"
+        id: "gavel",
+        name: "Gavel",
+        goal: "Whenever a player suggests a suspect, ask them (1) what their justification is and (2) whether or not that is a good justification.",
+        suggest: "A good mission for someone talkative.",
+        icon: "gavel"
     },
     {
-        id: "abolish",
-        name: "Abolish",
+        id: "power",
+        name: "Power",
+        goal: "Persuade another player to shut down the surveillance system, but you cannot be the one to shut it down.",
         suggest: "A good mission for someone daring.",
-        icon: "lock"
-    }
+        icon: "plug"
+    },
+    {
+        id: "eye",
+        name: "Eye",
+        goal: "Identify something the store does that makes life harder for Black people and suggest a way to improve it in your team’s recommendations to the store.",
+        suggest: "A good mission for someone empathetic.",
+        icon: "eye"
+    },
+    {
+        id: "paperclip",
+        name: "Paperclip",
+        goal: "When you find Form 14-3-98, get your team to discuss the comments and ask what they would do if a suspect submitted this form.",
+        suggest: "A good mission for someone focused.",
+        icon: "paperclip"
+    },
 ];
 const missionMap = MISSIONS.reduce((agg, val) => {
     agg[val.id] = val;
@@ -310,7 +326,10 @@ if (tabId === "decision") {
         fetch(`${API_ROOT}/api/game/decide/${gameId}?${query}`).then((res) => {
             if (res.success) {
                 messageEl.classList.add("success");
-                messageEl.innerText = "Successfully submitted. Please contact the game master for further instructions.";
+                const endLink = document.createElement("a");
+                endLink.href = `${SITE_ROOT}/discussion`;
+                endLink.innerText = "Successfully submitted. Click here to go to the end of the game.";
+                messageEl.appendChild(endLink);
             } else {
                 messageEl.classList.add("failure");
                 messageEl.innerText = "Failed to submit. Contact the game master.";
@@ -544,6 +563,26 @@ function doIntro() {
     });
 }
 
+function doDiscussion() {
+    sendHomeIfNotInGame();
+    const gameId = localStorage.getItem(GAME_PROPERTY);
+    const userId = localStorage.getItem(USER_PROPERTY);
+    const recapEl = document.querySelector(".mission-recap");
+    MISSIONS.forEach((missionData) => {
+        const div = document.createElement("div");
+        div.classList.add("mission-preview");
+        div.innerHTML = `
+            <h3>
+                <i class="fa fa-${missionData.icon}"></i>
+                <span>${missionData.name}</span>
+                <span class="players message success" data-recap-player="${missionData.id}"></span>
+            </h3>
+            <p>${missionData.goal}</p>
+        `;
+        recapEl.appendChild(div);
+    });
+}
+
 function doJoin() {
     if (window.location.href.indexOf("?join=") > -1) {
         const linkGameId = window.location.href.split("?join=")[1].split("&")[0];
@@ -647,6 +686,10 @@ if (viewId === "intro") {
     doIntro();
 }
 
+if (viewId === "discussion") {
+    doDiscussion();
+}
+
 const limitMins = 59;
 const limitSecs = 59;
 
@@ -728,38 +771,82 @@ function updateGame() {
                 hiddenClueEmail.classList.remove("hidden");
             }
         }
+        const nameMap = data.names || {};
+        const gameMissionMap = data.missions || {};
+        // Mission Icon
+        const coverEl = document.querySelector(".cover");
+        const missionIconEl = document.querySelector(".mission");
+        const hasMissionicon = missionIconEl && missionIconEl.classList.contains("hidden");
+        const hasMissionData = userId in gameMissionMap && gameMissionMap[userId] in missionMap;
+        if (hasMissionicon && hasMissionData) {
+            const missionId = gameMissionMap[userId];
+            const missionData = missionMap[missionId];
+            missionIconEl.querySelector("i").classList.add(`fa-${missionData.icon}`);
+            missionIconEl.classList.remove("hidden");
+            missionIconEl.addEventListener("click", (e) => {
+                if (coverEl) {
+                    coverEl.classList.remove("hidden");
+                }
+            });
+        }
+        const popupEl = document.querySelector(".popup");
+        if (coverEl && popupEl && popupEl.getAttribute("data-state") === "empty" && hasMissionData) {
+            const missionId = gameMissionMap[userId];
+            const missionData = missionMap[missionId];
+            popupEl.querySelector("i").classList.add(`fa-${missionData.icon}`);
+            popupEl.querySelector("span").innerText = missionData.name;
+            popupEl.querySelector("p").innerText = missionData.goal;
+            popupEl.setAttribute("data-state", "filled");
+            coverEl.addEventListener("click", (e) => {
+                if (e.toElement == coverEl) {
+                    coverEl.classList.add("hidden");
+                }
+            });
+        }
         // Intro Page
         const introEl = document.querySelector("[data-view=intro]");
         if (introEl) {
-            const nameMap = data.names || {};
             const screenNameInputEl = document.querySelector("#screen-name");
             if (screenNameInputEl && userId in data.names) {
                 screenNameInputEl.value = data.names[userId];
             }
-            const gameMissionMap = data.missions || {};
             Object.keys((missionMap)).forEach((missionId) => {
                 const btnEl = document.querySelector(`[data-mission=${missionId}]`);
                 const spanEl = document.querySelector(`[data-mission-player=${missionId}]`);
-                spanEl.innerText = "";
-                if (btnEl.classList.contains("accepted")) {
-                    btnEl.classList.remove("accepted");
+                if (btnEl && spanEl) {
+                    spanEl.innerText = "";
+                    if (btnEl.classList.contains("accepted")) {
+                        btnEl.classList.remove("accepted");
+                    }
+                    if (btnEl.classList.contains("locked")) {
+                        btnEl.classList.remove("locked");
+                    }
+                    btnEl.innerText = "Accept";
                 }
-                if (btnEl.classList.contains("locked")) {
-                    btnEl.classList.remove("locked");
-                }
-                btnEl.innerText = "Accept";
             });
             Object.keys((gameMissionMap)).forEach((missionUserId) => {
                 const missionId = gameMissionMap[missionUserId];
                 const btnEl = document.querySelector(`[data-mission=${missionId}]`);
                 const spanEl = document.querySelector(`[data-mission-player=${missionId}]`);
-                spanEl.innerText = `(${nameMap[missionUserId]})`;
-                if (missionUserId == userId) {
-                    btnEl.classList.add("accepted");
-                    btnEl.innerText = "Drop";
-                } else {
-                    btnEl.classList.add("locked");
-                    btnEl.innerText = "Taken";
+                if (btnEl && spanEl) {
+                    spanEl.innerText = `(${nameMap[missionUserId]})`;
+                    if (missionUserId == userId) {
+                        btnEl.classList.add("accepted");
+                        btnEl.innerText = "Drop";
+                    } else {
+                        btnEl.classList.add("locked");
+                        btnEl.innerText = "Taken";
+                    }
+                }
+            });
+        }
+        const recapEl = document.querySelector(".mission-recap");
+        if (recapEl) {
+            Object.keys((gameMissionMap)).forEach((missionUserId) => {
+                const missionId = gameMissionMap[missionUserId];
+                const spanEl = document.querySelector(`[data-recap-player=${missionId}]`);
+                if (spanEl) {
+                    spanEl.innerText = `(${nameMap[missionUserId]})`;
                 }
             });
         }
