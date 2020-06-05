@@ -445,3 +445,30 @@ p {
     color: red;
     font-family: monospace;
 }
+
+/* Intro */
+
+.mission-row .mission-preview {
+    display: inline-block;
+}
+
+.mission-row .mission-accept {
+    display: inline-block;
+    vertical-align: top;
+    padding: 15px 10px;
+    width: 80px;
+}
+
+.mission-row .mission-accept.accepted {
+    background: orange;
+}
+
+.mission-row .mission-accept.locked {
+    background: gray;
+}
+
+.mission-preview .players {
+    font-family: 'Inconsolata', monospace;
+    font-size: 18px;
+    font-weight: normal;
+}

@@ -114,6 +114,25 @@ const validSuspects = {
     "Shopper #2193": true
 };
 
+const MISSIONS = [
+    {
+        id: "conscience",
+        name: "Conscience",
+        suggest: "A good mission for someone empathetic.",
+        icon: "lock"
+    },
+    {
+        id: "abolish",
+        name: "Abolish",
+        suggest: "A good mission for someone daring.",
+        icon: "lock"
+    }
+];
+const missionMap = MISSIONS.reduce((agg, val) => {
+    agg[val.id] = val;
+    return agg;
+}, {});
+
 // Wake up game server
 fetch(API_ROOT);
 
@@ -449,7 +468,66 @@ if (tabId === "lookup") {
 }
 
 function doIntro() {
+    sendHomeIfNotInGame();
     const gameId = localStorage.getItem(GAME_PROPERTY);
+    const userId = localStorage.getItem(USER_PROPERTY);
+    // Screen Name
+    const screenNameInputEl = document.querySelector("#screen-name");
+    const screenNameBtnEl = document.querySelector("#update-name");
+    const nameMsgEl = document.querySelector("#name-message");
+    const setScreenName = () => {
+        const name = screenNameInputEl.value;
+        fetch(`${API_ROOT}/api/name/${gameId}?user=${userId}&name=${encodeURI(name)}`).then((res) => {
+            if (res.success) {
+                showMessage(nameMsgEl, true, "Successfully updated screen name!");
+            } else {
+                showMessage(nameMsgEl, false, res.message || "Failed to update screen name,");
+            }
+        }).catch((err) => {
+            showMessage(nameMsgEl, false, "Failed to update screen name.");
+        });
+    };
+    screenNameBtnEl.addEventListener("click", setScreenName);
+    screenNameInputEl.addEventListener("keypress", (e) => {
+        if (e.keyCode === 13) {
+            setScreenName();
+        }
+    });
+    // Mission Select
+    const missionFormEl = document.querySelector(".mission-select");
+    const missionMsgEl = document.querySelector("#mission-message");
+    MISSIONS.forEach((mission) => {
+        const html = `
+            <button class="button mission-accept" data-mission="${mission.id}">Accept</button>
+            <div class="mission-preview">
+                <h3>
+                    <i class="fa fa-${mission.icon}"></i>
+                    <span>${mission.name}</span>
+                    <span class="players message success" data-mission-player="${mission.id}"></span>
+                </h3>
+                <p>${mission.suggest}</p>
+            </div>
+        `;
+        const div = document.createElement("div");
+        div.classList.add("mission-row");
+        div.innerHTML = html;
+        missionFormEl.appendChild(div);
+    });
+    MISSIONS.forEach((mission) => {
+        const btn = document.querySelector(`[data-mission=${mission.id}]`);
+        btn.addEventListener("click", (e) => {
+            fetch(`${API_ROOT}/api/mission/toggle/${gameId}?user=${userId}&mission=${mission.id}`).then((res) => {
+                if (res.success) {
+                    showMessage(missionMsgEl, true, "Successfully updated your mission!");
+                } else {
+                    showMessage(missionMsgEl, false, res.message || "Failed to accept mission.");
+                }
+            }).catch((err) => {
+                showMessage(missionMsgEl, false, "Failed to accept mission.");
+            });
+        });
+    });
+    // Play Game
     const startBtn = document.querySelector("#start-game");
     startBtn.addEventListener("click", (e) => {
         fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
@@ -543,7 +621,7 @@ function doJoin() {
 }
 
 if (viewId === "home") {
-    if (localStorage.hasOwnProperty(GAME_PROPERTY)) {
+    if (localStorage.hasOwnProperty(GAME_PROPERTY) || window.location.href.indexOf("?join=") > -1) {
         doJoin();
     } else {
         const button = document.querySelector("#create-game .button");
@@ -584,7 +662,8 @@ const sidebarClues = [
 
 function updateGame() {
     const gameId = localStorage.getItem(GAME_PROPERTY);
-    if (!gameId) {
+    const userId = localStorage.getItem(USER_PROPERTY);
+    if (!gameId || ! userId) {
         return;
     }
     const sidebar = document.querySelector(".sidebar");
@@ -649,7 +728,50 @@ function updateGame() {
                 hiddenClueEmail.classList.remove("hidden");
             }
         }
+        // Intro Page
+        const introEl = document.querySelector("[data-view=intro]");
+        if (introEl) {
+            const nameMap = data.names || {};
+            const screenNameInputEl = document.querySelector("#screen-name");
+            if (screenNameInputEl && userId in data.names) {
+                screenNameInputEl.value = data.names[userId];
+            }
+            const gameMissionMap = data.missions || {};
+            Object.keys((missionMap)).forEach((missionId) => {
+                const btnEl = document.querySelector(`[data-mission=${missionId}]`);
+                const spanEl = document.querySelector(`[data-mission-player=${missionId}]`);
+                spanEl.innerText = "";
+                if (btnEl.classList.contains("accepted")) {
+                    btnEl.classList.remove("accepted");
+                }
+                if (btnEl.classList.contains("locked")) {
+                    btnEl.classList.remove("locked");
+                }
+                btnEl.innerText = "Accept";
+            });
+            Object.keys((gameMissionMap)).forEach((missionUserId) => {
+                const missionId = gameMissionMap[missionUserId];
+                const btnEl = document.querySelector(`[data-mission=${missionId}]`);
+                const spanEl = document.querySelector(`[data-mission-player=${missionId}]`);
+                spanEl.innerText = `(${nameMap[missionUserId]})`;
+                if (missionUserId == userId) {
+                    btnEl.classList.add("accepted");
+                    btnEl.innerText = "Drop";
+                } else {
+                    btnEl.classList.add("locked");
+                    btnEl.innerText = "Taken";
+                }
+            });
+        }
     });
+}
+
+function sendHomeIfNotInGame() {
+    const hasGameId = localStorage.hasOwnProperty(GAME_PROPERTY);
+    const hasUserId = localStorage.hasOwnProperty(USER_PROPERTY);
+    if ((!hasGameId || !hasUserId) && viewId !== "home") {
+        window.location =`${SITE_ROOT}`;
+    }
 }
 
 window.scrollTo(0, 0);

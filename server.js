@@ -46,6 +46,35 @@ const whiteList = [
     "https://ethicsescape.github.io"
 ];
 
+const animalNames = [
+    "axolotl",
+    "buffalo",
+    "capybara",
+    "dragonfly",
+    "emu",
+    "ferret",
+    "goose",
+    "hyena",
+    "impala",
+    "jaguar",
+    "kangaroo",
+    "leopard",
+    "manatee",
+    "newt",
+    "octopus",
+    "penguin",
+    "quetzal",
+    "rhinoceros",
+    "seahorse",
+    "tortoise",
+    "uguisu",
+    "vulture",
+    "walrus",
+    "xerus",
+    "yak",
+    "zebra"
+];
+
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || whiteList.indexOf(origin) > -1) {
@@ -60,10 +89,6 @@ app.use(express.static("public"));
 
 app.get("/", (request, response) => {
     response.send({ success: true, message: "You have reached a Panopticon game server." });
-});
-
-app.get("/join/:gameid", (request, response) => {
-    response.sendFile(__dirname + "/views/index.html");
 });
 
 app.get("/api/unlock/:clueid", (request, response) => {
@@ -113,12 +138,40 @@ app.get("/api/game/fetch/:gameid", (request, response) => {
     });
 });
 
+function setScreenName(gameId, userId, name, override) {
+    return new Promise((resolve, reject) => {
+        const screenName = name.substr(0, 10).toUpperCase();
+        const ref = db.ref(`${ROOT}/games/${gameId}/names/${userId}`);
+        db.ref(`${ROOT}/games/${gameId}/names`).once("value", (snap) => {
+            const nameMap = snap.val();
+            if (nameMap && userId in nameMap) {
+                const invertedMap = Object.keys(nameMap).reduce((agg, uid) => {
+                    agg[nameMap[uid]] = uid;
+                    return agg;
+                }, {});
+                if (screenName in invertedMap) {
+                    reject(`Name ${screenName} is already taken.`);
+                } else if (override) {
+                    ref.set(screenName).then(resolve).catch(reject);  
+                } else {
+                    resolve();
+                }
+            } else {
+                ref.set(screenName).then(resolve).catch(reject);  
+            }
+        });
+    });
+}
+
 app.get("/api/game/join/:gameid", (request, response) => {
     const gameId = request.params.gameid;
     const newUser = request.query.new === "true";
+    const randomIndex = Math.floor(Math.random() * animalNames.length);
+    const randomName = animalNames[randomIndex];
     if (!newUser) {
         const userId = request.query.user;
         const ref = db.ref(`${ROOT}/games/${gameId}/users/${userId}`).set(true).then(() => {
+            setScreenName(gameId, userId, randomName, false);
             response.send({ success: true, userId });
         }).catch((err) => {
             response.send({ success: false, err: err });
@@ -126,7 +179,65 @@ app.get("/api/game/join/:gameid", (request, response) => {
     } else {
         const ref = db.ref(`${ROOT}/games/${gameId}/users`).push(true);
         const userId = ref.key;
+        setScreenName(gameId, userId, randomName, false);
         response.send({ success: true, userId }); 
+    }
+});
+
+app.get("/api/name/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const userId = request.query.user;
+    const name = request.query.name;
+    if (gameId && userId && name) {
+        setScreenName(gameId, userId, name, true).then(() => {
+            response.send({ success: true });
+        }).catch((err) => {
+            response.send({ success: false, message: err });
+        });
+    } else {
+        response.send({ success: false, message: "Missing game ID, user ID, or screen name." }); 
+    }
+});
+
+app.get("/api/mission/toggle/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const userId = request.query.user;
+    const missionId = request.query.mission;
+    if (gameId && userId && missionId) {
+        db.ref(`${ROOT}/games/${gameId}/started`).once("value", (startSnap) => {
+            const hasStarted = startSnap.val() !== null;
+            const ref = db.ref(`${ROOT}/games/${gameId}/missions/${userId}`);
+            db.ref(`${ROOT}/games/${gameId}/missions`).once("value", (snap) => {
+                const val = snap.val() || {};
+                const invertedMap = Object.keys(val).reduce((agg, k) => {
+                    agg[val[k]] = k;
+                    return agg;
+                }, {});
+                if (val[userId] === missionId) {
+                    if (!hasStarted) {
+                        ref.remove().then(() => {
+                            response.send({ success: true });
+                        }).catch((err) => {
+                            response.send({ success: false, err: err });
+                        });
+                    } else {
+                        response.send({ success: false, message: "You can't drop a mission after the game has started." });
+                    }
+                } else if (missionId in invertedMap) {
+                    response.send({ success: false, message: "Someone else has already taken that mission." });
+                } else if (!(userId in  val)) {
+                    ref.set(missionId).then(() => {
+                        response.send({ success: true });
+                    }).catch((err) => {
+                        response.send({ success: false, err: err });
+                    });
+                } else {
+                    response.send({ success: false, message: "You can't change missions after the game has started." });
+                }
+            });
+        });
+    } else {
+        response.send({ success: false, message: "Missing game ID, user ID, or mission ID." }); 
     }
 });
 

@@ -24,10 +24,18 @@
                 <div class="content" data-view="intro">
                     <h1 class="uppercase centered">Panopticon Escape Room</h1>
                     <h2>Introduction</h2>
+                    <p>Choose a screen name (up to 10 letters).</p>
+                    <p id="name-message" class="message"></p>
+                    <div class="form name-form">
+                        <input id="screen-name" class="uppercase" type="text" placeholder="name">
+                        <button id="update-name" class="button">Save</button>
+                    </div>
+                    <p><strong>Pro-Tip:</strong> Collaborate on <a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1Nt1m6yHxT6oTDLtRUzYTkSsvR7ZkwXkp_FdiSfyYBTg/edit?usp=sharing">this shared notepad</a>.</p>
                     <p>Watch this video (or read the transcript) to learn how to play.</p>
                     <p>Coming Soon...</p>
                     <h2>Missions</h2>
-                    <p>Coming Soon...</p>
+                    <p id="mission-message" class="message"></p>
+                    <div class="mission-select"></div>
                     <h2>Play</h2>
                     <p>You have 60 minutes, starting when you push this button.</p>
                     <button id="start-game" class="button primary">Start the Game</button>
