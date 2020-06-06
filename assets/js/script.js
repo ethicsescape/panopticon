@@ -201,9 +201,10 @@ if (viewId === "secure") {
         const elephant = atob(document.querySelector("#elephant").innerText).toLowerCase();
         const viper = decodeURI(atob(document.querySelector("#viper").innerText));
         const gameId = localStorage.getItem(GAME_PROPERTY);
+        const userId = localStorage.getItem(USER_PROPERTY);
         attempts++;
         if (accessCode === elephant) {
-            fetch(`${API_ROOT}/api/unlock/${clueId}?code=${accessCode}&game=${gameId}`);
+            fetch(`${API_ROOT}/api/unlock/${clueId}?code=${accessCode}&game=${gameId}&user=${userId}`);
             if (messageEl.classList.contains("failure")) {
                 messageEl.classList.remove("failure");
             }
@@ -602,8 +603,25 @@ function doJoin() {
     }
     document.querySelector("[data-view=join]").classList.remove("hidden");
     document.querySelector("#create-game").classList.add("hidden");
+    const linkStatEl = document.querySelector("#link-status");
     const gameLinkEl = document.querySelector("#game-link");
-    gameLinkEl.innerText = `${SITE_ROOT}?join=${gameId}`;
+    const joinLink = `${SITE_ROOT}?join=${gameId}`;
+    gameLinkEl.innerText = joinLink;
+    gameLinkEl.setAttribute("data-clipboard-text", joinLink);
+    const clip = new ClipboardJS(gameLinkEl);
+    clip.on("success", (e) => {
+        showMessage(linkStatEl, true, "Copied join URL to clipboard!");
+        setTimeout(() => {
+            linkStatEl.innerText = "";
+        }, 3000);
+        e.clearSelection();
+    });
+    clip.on("error", (e) => {
+        showMessage(linkStatEl, false, "Failed to copy URL automatically.");
+        setTimeout(() => {
+            linkStatEl.innerText = "";
+        }, 3000);
+    });
     const lobbyStatusEl = document.querySelector("#lobby-status");
     if (db) {
         db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
@@ -813,6 +831,10 @@ function updateGame() {
         }
         // Intro Page
         const introEl = document.querySelector("[data-view=intro]");
+        const goToCaseLink = document.querySelector("#go-to-case");
+        if (goToCaseLink && data.started) {
+            showEl(goToCaseLink);
+        }
         if (introEl) {
             const screenNameInputEl = document.querySelector("#screen-name");
             if (screenNameInputEl && userId in data.names) {
@@ -903,10 +925,46 @@ function updateGame() {
                     } else {
                         resTimeEl.classList.add("failure");
                     }
-                    if (finalSubmission.suspect === "Shopper #6871") {
+                    if (btoa(finalSubmission.suspect) === "U2hvcHBlciAjNjg3MQ==") {
                         resSusEl.classList.add("success");
                     } else {
                         resSusEl.classList.add("failure");
+                    }
+                    const resCluEl = document.querySelector("#results-clues");
+                    if (resCluEl.getAttribute("data-state") === "empty") {
+                        const unlockedByMap = data.unlockedby || {};
+                        let clueCount = 0;
+                        resCluEl.setAttribute("data-state", "filled");
+                        sidebarClues.forEach((clueId) => {
+                            const clueResHtml = `
+                                <div class="clue">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                                <div class="clue-status">
+                                    <strong>${clueId}</strong>
+                                    <span></span>
+                                </div>
+                            `;
+                            const div = document.createElement("div");
+                            div.innerHTML = clueResHtml;
+                            const sc = div.querySelector("span");
+                            const ci = div.querySelector(".clue");
+                            if (clueId in unlockedByMap) {
+                                clueCount++;
+                                ci.classList.add("unlocked");
+                                sc.innerText = ` unlocked by ${nameMap[unlockedByMap[clueId]]}`;
+                            } else {
+                                sc.innerText = ` not unlocked`;
+                            }
+                            resCluEl.appendChild(div);
+                        });
+                        const clueCountEl = document.querySelector("#clue-count");
+                        clueCountEl.innerText = `${clueCount}/${sidebarClues.length}`;
+                        if (clueCount === sidebarClues.length) {
+                            clueCountEl.classList.add("success");
+                        } else {
+                            clueCountEl.classList.add("failure");
+                        }
                     }
                     const popularMap = {};
                     const voteMap = discData.votes || {};
@@ -1011,7 +1069,7 @@ function updateGame() {
                     if (holderUserId) {
                         tickerEl.innerText = "How did this mission go?";    
                     } else {
-                        tickerEl.innerText = "Did you achieve this mission, anyway?";
+                        tickerEl.innerText = "Did you achieve this mission anyway?";
                     }
                     showEl(nextBtn);
                     showEl(missionRevealEl);

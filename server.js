@@ -37,7 +37,7 @@ const db = firebase.database();
 
 const ROOT = "panopticon";
 
-const whiteList = [
+const allowedDomains = [
     "http://panopticonsecurity.glitch.me",
     "https://panopticonsecurity.glitch.me",
     "http://localhost:4000",
@@ -77,7 +77,7 @@ const animalNames = [
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || whiteList.indexOf(origin) > -1) {
+        if (!origin || allowedDomains.indexOf(origin) > -1) {
             callback(null, true);
         } else {
             callback(new Error(`Origin not permitted access to Panopticon Server: ${origin}`));
@@ -95,12 +95,26 @@ app.get("/api/unlock/:clueid", (request, response) => {
     const clueId = request.params.clueid;
     const code = request.query.code.toLowerCase();
     const gameId = request.query.game;
-    if (gameId) {
+    const userId = request.query.user;
+    if (gameId && userId) {
         db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`).set(code).then(() => {
-            response.send({ success: true });
+            const ref = db.ref(`${ROOT}/games/${gameId}/unlockedby/${clueId}`);
+            ref.once("value", (snap) => {
+                if (snap.val()) {
+                    response.send({ success: true });
+                } else {
+                    ref.set(userId).then(() => {
+                        response.send({ success: true });
+                    }).catch((err) => {
+                        response.send({ success: false, error: err });
+                    });
+                }
+            });
         }).catch((err) => {
             response.send({ success: false, error: err });
         });
+    } else {
+        response.send({ success: false, message: "Missing gameId or userId." });
     }
 });
 
