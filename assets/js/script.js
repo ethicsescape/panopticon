@@ -790,15 +790,16 @@ function updateGame() {
             });
         }
         const popupEl = document.querySelector(".popup");
+        const closeEl = document.querySelector(".popup .close");
         if (coverEl && popupEl && popupEl.getAttribute("data-state") === "empty" && hasMissionData) {
             const missionId = gameMissionMap[userId];
             const missionData = missionMap[missionId];
-            popupEl.querySelector("i").classList.add(`fa-${missionData.icon}`);
-            popupEl.querySelector("span").innerText = missionData.name;
-            popupEl.querySelector("p").innerText = missionData.goal;
+            popupEl.querySelector("[data-role=icon]").classList.add(`fa-${missionData.icon}`);
+            popupEl.querySelector("[data-role=name]").innerText = missionData.name;
+            popupEl.querySelector("[data-role=goal]").innerText = missionData.goal;
             popupEl.setAttribute("data-state", "filled");
             coverEl.addEventListener("click", (e) => {
-                if (e.toElement == coverEl) {
+                if (e.target == coverEl || e.target == closeEl) {
                     coverEl.classList.add("hidden");
                 }
             });

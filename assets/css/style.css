@@ -514,3 +514,15 @@ p {
 .cover .popup p {
     text-align: left;
 }
+
+.cover .popup .close {
+    float: right;
+    font-family: 'Inconsolata', monospace;
+    font-size: 24px;
+    font-weight: normal;
+    color: gray;
+}
+
+.cover .popup .close:hover {
+    cursor: pointer;
+}
