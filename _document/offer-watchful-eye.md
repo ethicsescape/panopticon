@@ -1,7 +1,7 @@
 ---
 layout: case
 ---
-# FWD: Attention: The Attention Layer is Here! (Special Offer Enclosed)
+# FWD: Attention: The Attention Layer is Here! (Offer Enclosed)
 
 **From:** info@marksdepartmentstore.com
 

@@ -9,6 +9,10 @@ Today, I read an interesting article by Dr. Shoshana Zuboff about surveillance c
 
 I made a venn diagram based on that article, which I think is pretty cool. Anyway, I also came up with a clever way to remember the password to an important email...
 
+Look for the subject line:
+
+[FWD: Attention: The Attention Layer is Here! (Offer Enclosed)](../case/email)
+
 ![Venn diagram showing the three components of surveillance capitalism.](../assets/img/venn_diagram.png)
 
 Man, I really hate those tech companies profiting off my data.

@@ -3,6 +3,12 @@ layout: case
 ---
 # Situation Briefing
 
+## Video
+
+<iframe class="video-player" width="560" height="315" src="https://www.youtube-nocookie.com/embed/mid7P-wI8xg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+## Transcript
+
 At Mark’s Department Store, we are proud of the wide array of high quality merchandise we offer our customers. Our Philadelphia location is a six-story shopping complex with 48 sections on each floor. Unfortunately, our top-quality selection makes us a frequent target for shoplifting.
 
 We partnered with leading technology firm Panopticon Security to install a state of the art surveillance system in our stores. This is well-known to our customers and partners, helping deter cases of retail fraud and increasing our rate of apprehending thieves.

@@ -23,6 +23,8 @@ By the way, our previous head of loss prevention said you would need access to t
 
 Here is the code: **dmw0723**
 
+Look for the subject line: [FWD: RE: Movement Layer Access Key](../case/email)
+
 This password expires in one hour and I don’t know which email it opens. Other individual emails may be password-protected too, you’ll have to figure those out on your own.
 
 The movement tracking data we get is pretty good. Since we can't get the CCTV footage today, here are some suspicious behaviors we normally look for when we're on security detail:

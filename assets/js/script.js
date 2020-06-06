@@ -479,7 +479,7 @@ if (viewId === "replay") {
     showMovementData(monitorEl, replayData);
 }
 
-if (tabId === "lookup") {
+if (tabId === "lookup" && viewId === "case") {
     const inputEl = document.querySelector("[data-view=lookup] input");
     const btnEl = document.querySelector("[data-view=lookup] button");
     const msgEl = document.querySelector("[data-view=lookup] .message");
@@ -787,14 +787,16 @@ function updateGame() {
         }
         const hasPreReqs = "risk" in unlockedMap && "movement" in unlockedMap && "attention" in unlockedMap;
         const isOpened = "removal" in unlockedMap;
-        if (hasPreReqs && !isOpened) {
-            const hiddenClueBanner = document.querySelector("#banner-removal");
+        if (hasPreReqs) {
             const hiddenClueEmail = document.querySelector("#email-removal");
-            if (hiddenClueBanner) {
-                hiddenClueBanner.classList.remove("hidden");
-            }
             if (hiddenClueEmail) {
                 hiddenClueEmail.classList.remove("hidden");
+            }
+            if (!isOpened) {
+                const hiddenClueBanner = document.querySelector("#banner-removal");
+                if (hiddenClueBanner) {
+                    hiddenClueBanner.classList.remove("hidden");
+                }
             }
         }
         const nameMap = data.names || {};

@@ -5,7 +5,7 @@ layout: case
     <h1 class="uppercase">Decision</h1>
     <p>When you have determined your prime suspect, submit your choice here with your rationale to inform store management.</p>
     <div class="form">
-        <select>
+        <select class="long-select">
             <option value="None" selected>No Shopper Selected</option>
             <option value="Shopper #1263">Shopper #1263</option>
             <option value="Shopper #6871">Shopper #6871</option>
