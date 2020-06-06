@@ -4,7 +4,7 @@ layout: case
 <div class="content" data-view="case">
     <h1 class="uppercase">Case</h1>
     <h2>Situation Briefing</h2>
-    <p>First things first, read the situation briefing.</p>
+    <p>You can re-read the situation briefing here.</p>
     <a href="../document/briefing" class="button"><i class="fa fa-flag"></i> Open Briefing</a>
     <hr>
     <h2>Stolen Merchandise</h2>

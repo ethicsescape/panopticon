@@ -22,14 +22,61 @@
         <div class="app">
             <div class="page">
                 <div class="content" data-view="discussion">
-                    <h1 class="uppercase centered">Panopticon Escape Room</h1>
-                    <h2>Escape</h2>
-                    <p>Coming soon...</p>
-                    <h2>Missions</h2>
-                    <div class="mission-recap"></div>
-                    <h2>Resolution</h2>
-                    <p>The password is: <strong>VICK</strong></p>
-                    <a href="./secure/resolution" class="button">View Resolution</a>
+                    <h1 class="uppercase centered">Discussion</h1>
+                    <div id="discussion-entry" class="centered hidden">
+                        <br>
+                        <p>Now, it's time to reveal and discuss the secret missions.</p>
+                        <button id="start-discussion" class="button primary" data-state="nohook">Begin</button>
+                    </div>
+                    <div id="mission-box" class="hidden">
+                        <br>
+                        <div id="mission-reveal" class="centered message success">
+                            <p>
+                                <span id="name-span"></span>
+                                <span> had the mission </span>
+                                <span id="mission-span"></span>
+                            </p>
+                            <p>
+                                <span id="total-span"></span>
+                            </p>
+                        </div>
+                        <h3 id="ticker" class="centered">Who do you think had this mission?</h3>
+                        <p id="mission-text"></p>
+                        <p class="centered">
+                            <strong>VOTE: </strong>
+                            <span class="vote-buttons" data-state="empty"></span>
+                            <span id="vote-result" class="message success"></span>
+                        </p>
+                        <p id="vote-status" class="message success centered"></p>
+                        <div class="centered">
+                            <button id="reveal-btn" class="button primary" data-state="nohook">Reveal Player</button>
+                            <button id="next-btn" class="button secondary hidden" data-state="nohook">Next Mission</button>
+                        </div>
+                    </div>
+                    <div id="conclusion" data-state="empty" class="hidden">
+                        <h2>Resolution</h2>
+                        <p>Now you can read the scenario resolution to find out what happened to your chosen suspect. The password is: <strong>VICK</strong></p>
+                        <a href="./secure/resolution" class="button">View Resolution</a>
+                        <h2>Results</h2>
+                        <div class="row-half">
+                            <h3>Time</h3>
+                            <p>You escaped in <span id="results-time" class="message"></span>.</p>
+                        </div>
+                        <div class="row-half">
+                            <h3>Suspect</h3>
+                            <p>You accused <span id="results-suspect" class="message"></span>.</p>
+                        </div>
+                        <div class="row-half">
+                            <h3>Rationale</h3>
+                            <p id="results-rationale"></p>
+                        </div>
+                        <div class="row-half">
+                            <h3>Recommendations</h3>
+                            <p id="results-recommendations"></p>
+                        </div>
+                        <h3>Missions</h3>
+                        <div id="results-missions"></div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -84,6 +84,25 @@ function tryPassword(entered, expected, ms) {
     });
 }
 
+function invertMap(map) {
+    return Object.keys(map).reduce((inverted, key) => {
+        inverted[map[key]] = key;
+        return inverted;
+    }, {});
+}
+
+function hideEl(el) {
+    if (!el.classList.contains("hidden")) {
+        el.classList.add("hidden");
+    }
+}
+
+function showEl(el) {
+    if (el.classList.contains("hidden")) {
+        el.classList.remove("hidden");
+    }
+}
+
 if (window.firebase) {
     const firebaseConfig = {
         apiKey: "AIzaSyAQT7XBXuJ2eZk4xnb1y5xNxPZC1POe0Lo",
@@ -120,28 +139,32 @@ const MISSIONS = [
         name: "Gavel",
         goal: "Whenever a player suggests a suspect, ask them (1) what their justification is and (2) whether or not that is a good justification.",
         suggest: "A good mission for someone talkative.",
-        icon: "gavel"
+        icon: "gavel",
+        recap: "evaluate players' justifications"
     },
     {
         id: "power",
         name: "Power",
         goal: "Persuade another player to shut down the surveillance system, but you cannot be the one to shut it down.",
         suggest: "A good mission for someone daring.",
-        icon: "plug"
+        icon: "plug",
+        recap: "convince someone to shut down the system"
     },
     {
         id: "eye",
         name: "Eye",
         goal: "Identify something the store does that makes life harder for Black people and suggest a way to improve it in your team’s recommendations to the store.",
         suggest: "A good mission for someone empathetic.",
-        icon: "eye"
+        icon: "eye",
+        recap: "identify something that harms Black people"
     },
     {
         id: "paperclip",
         name: "Paperclip",
         goal: "When you find Form 14-3-98, get your team to discuss the comments and ask what they would do if a suspect submitted this form.",
         suggest: "A good mission for someone focused.",
-        icon: "paperclip"
+        icon: "paperclip",
+        recap: "discuss consent and data removal"
     },
 ];
 const missionMap = MISSIONS.reduce((agg, val) => {
@@ -326,10 +349,8 @@ if (tabId === "decision") {
         fetch(`${API_ROOT}/api/game/decide/${gameId}?${query}`).then((res) => {
             if (res.success) {
                 messageEl.classList.add("success");
-                const endLink = document.createElement("a");
-                endLink.href = `${SITE_ROOT}/discussion`;
-                endLink.innerText = "Successfully submitted. Click here to go to the end of the game.";
-                messageEl.appendChild(endLink);
+                const endLink = document.querySelector("#end-link");
+                showEl(endLink);
             } else {
                 messageEl.classList.add("failure");
                 messageEl.innerText = "Failed to submit. Contact the game master.";
@@ -567,20 +588,6 @@ function doDiscussion() {
     sendHomeIfNotInGame();
     const gameId = localStorage.getItem(GAME_PROPERTY);
     const userId = localStorage.getItem(USER_PROPERTY);
-    const recapEl = document.querySelector(".mission-recap");
-    MISSIONS.forEach((missionData) => {
-        const div = document.createElement("div");
-        div.classList.add("mission-preview");
-        div.innerHTML = `
-            <h3>
-                <i class="fa fa-${missionData.icon}"></i>
-                <span>${missionData.name}</span>
-                <span class="players message success" data-recap-player="${missionData.id}"></span>
-            </h3>
-            <p>${missionData.goal}</p>
-        `;
-        recapEl.appendChild(div);
-    });
 }
 
 function doJoin() {
@@ -841,15 +848,206 @@ function updateGame() {
                 }
             });
         }
-        const recapEl = document.querySelector(".mission-recap");
-        if (recapEl) {
-            Object.keys((gameMissionMap)).forEach((missionUserId) => {
-                const missionId = gameMissionMap[missionUserId];
-                const spanEl = document.querySelector(`[data-recap-player=${missionId}]`);
-                if (spanEl) {
-                    spanEl.innerText = `(${nameMap[missionUserId]})`;
-                }
+        // Discussion
+        let finalSubmission = false;
+        if (data.hasOwnProperty("decisions")) {
+            const endLink = document.querySelector("#end-link");
+            if (endLink) {
+                showEl(endLink);
+            }
+            const submissions = Object.keys(data.decisions).map((key) => {
+                return data.decisions[key];
+            }).sort((a, b) => {
+                return b.timestamp - a.timestamp;
             });
+            finalSubmission = submissions[0];
+            const suspectId = finalSubmission.suspect.split("#")[1];
+            const suspectTag = document.querySelector(`[data-shopper="${suspectId}"]`);
+            if (suspectTag && suspectTag.innerText.indexOf("selected") < 0) {
+                suspectTag.innerText = `${suspectTag.innerText} (the suspect you selected)`;
+            }
+        }
+        const discussionEl = document.querySelector("[data-view=discussion]");
+        if (discussionEl) {
+            const discData = data.discussion || false;
+            if (!discData) {
+                showEl(discussionEl.querySelector("#discussion-entry"));
+                hideEl(discussionEl.querySelector("#mission-box"));
+                hideEl(discussionEl.querySelector("#conclusion"));
+                const startBtn = document.querySelector("#start-discussion");
+                if (startBtn.getAttribute("data-state") === "nohook") {
+                    startBtn.addEventListener("click", (e) => {
+                        fetch(`${API_ROOT}/api/discussion/next/${gameId}`);
+                    });
+                    startBtn.setAttribute("data-state", "listening");
+                }
+            } else if (discData.active === "end") {
+                hideEl(discussionEl.querySelector("#discussion-entry"));
+                hideEl(discussionEl.querySelector("#mission-box"));
+                showEl(discussionEl.querySelector("#conclusion"));
+                const concEl = discussionEl.querySelector("#conclusion");
+                if (finalSubmission && concEl.getAttribute("data-state") === "empty") {
+                    concEl.setAttribute("data-state", "filled");
+                    const ms = finalSubmission.timestamp - data.started;
+                    const totalSecs = Math.floor(ms / 1000);
+                    const mins = Math.floor((totalSecs / 60));
+                    const secs = totalSecs % 60;
+                    const resTimeEl = document.querySelector("#results-time");
+                    const resSusEl = document.querySelector("#results-suspect");
+                    resTimeEl.innerText = `${mins} min${mins === 1 ? "" : "s"}, ${secs} sec${secs === 1 ? "" : "s"}`;
+                    resSusEl.innerText = finalSubmission.suspect;
+                    document.querySelector("#results-rationale").innerText = finalSubmission.rationale;
+                    document.querySelector("#results-recommendations").innerText = finalSubmission.recommendations;
+                    if (mins <= 59) {
+                        resTimeEl.classList.add("success");
+                    } else {
+                        resTimeEl.classList.add("failure");
+                    }
+                    if (finalSubmission.suspect === "Shopper #6871") {
+                        resSusEl.classList.add("success");
+                    } else {
+                        resSusEl.classList.add("failure");
+                    }
+                    const popularMap = {};
+                    const voteMap = discData.votes || {};
+                    Object.keys(voteMap).forEach((missionId) => {
+                        Object.keys(voteMap[missionId]).forEach((otherUserId) => {
+                            const votedForId = voteMap[missionId][otherUserId];
+                            if (!(votedForId in popularMap)) {
+                                popularMap[votedForId] = {};
+                            }
+                            if (!(missionId in popularMap[votedForId])) {
+                                popularMap[votedForId][missionId] = 0;
+                            }
+                            popularMap[votedForId][missionId]++;
+                        });
+                    });
+                    const resMisEl = document.querySelector("#results-missions");
+                    Object.keys(gameMissionMap).forEach((doerId) => {
+                        const div = document.createElement("div");
+                        const p = document.createElement("p");
+                        const s1 = document.createElement("strong");
+                        s1.innerText = nameMap[doerId];
+                        const s2 = document.createElement("span");
+                        s2.innerText= ` tried to ${missionMap[gameMissionMap[doerId]].recap}`;
+                        p.appendChild(s1);
+                        p.appendChild(s2);
+                        div.appendChild(p);
+                        const ul = document.createElement("ul");
+                        if (doerId in popularMap) {
+                            Object.keys(popularMap[doerId]).forEach((mid) => {
+                                const li = document.createElement("li");
+                                const x = popularMap[doerId][mid];
+                                li.innerText = `${x} player${x === 1 ? "" : "s"} thought were trying to ${missionMap[mid].recap}`;
+                                if (mid === gameMissionMap[doerId]) {
+                                    li.classList.add("message");
+                                    li.classList.add("success");
+                                }
+                                ul.appendChild(li);
+                            });
+                        } else {
+                            const li = document.createElement("li");
+                            li.innerText = "But no one realized it was them";
+                            ul.appendChild(li);
+                        }
+                        div.appendChild(ul);
+                        resMisEl.appendChild(div);
+                    });
+                }
+            } else if (discData.active) {
+                hideEl(discussionEl.querySelector("#discussion-entry"));
+                showEl(discussionEl.querySelector("#mission-box"));
+                hideEl(discussionEl.querySelector("#conclusion"));
+                const revealBtn = document.querySelector("#reveal-btn");
+                if (revealBtn.getAttribute("data-state") === "nohook") {
+                    revealBtn.addEventListener("click", (e) => {
+                        // const confirm = prompt("Has everyone voted? Type 'yes' to reveal.");
+                        // if (confirm.toLowerCase().indexOf("yes") > -1) {
+                            fetch(`${API_ROOT}/api/discussion/reveal/${gameId}`);
+                        // }
+                    });
+                    revealBtn.setAttribute("data-state", "listening");
+                }
+                const nextBtn = document.querySelector("#next-btn");
+                if (nextBtn.getAttribute("data-state") === "nohook") {
+                    nextBtn.addEventListener("click", (e) => {
+                        // const confirm = prompt("Had a good discussion? Type 'yes' to move on.");
+                        // if (confirm.toLowerCase().indexOf("yes") > -1) {
+                            fetch(`${API_ROOT}/api/discussion/next/${gameId}`);
+                        // }
+                    });
+                    nextBtn.setAttribute("data-state", "listening");
+                }
+                const activeMission = discData.active;
+                console.log(activeMission);
+                const missionRevealEl = document.querySelector("#mission-reveal");
+                const invertedGameMissionMap = invertMap(gameMissionMap);
+                const holderUserId = invertedGameMissionMap[activeMission];
+                const voteMap = discData.votes || {};
+                const missionVotes = voteMap[activeMission] || {};
+                if (holderUserId) {
+                    const c = Object.keys(missionVotes).reduce((agg, key) => {
+                        return agg + (missionVotes[key] === holderUserId ? 1 : 0);
+                    }, 0);
+                    missionRevealEl.querySelector("#name-span").innerText = nameMap[holderUserId];
+                    missionRevealEl.querySelector("#total-span").innerText = `(${c} player${c === 1 ? "" : "s"} correctly guessed it was them)`;
+                } else {
+                    missionRevealEl.querySelector("#name-span").innerText = "no one";
+                    missionRevealEl.querySelector("#total-span").innerText = "";
+                }
+                const spanHTML = `
+                    <i class="fa fa-${missionMap[activeMission].icon}"></i> ${missionMap[activeMission].name}
+                `.trim();
+                missionRevealEl.querySelector("#mission-span").innerHTML = spanHTML;
+                const missionTextEl = document.querySelector("#mission-text");
+                missionTextEl.innerText = missionMap[activeMission].goal;
+                const tickerEl = document.querySelector("#ticker");
+                if (discData.mode === "vote") {
+                    tickerEl.innerText = "Who do you think had this mission?";
+                    showEl(revealBtn);
+                    hideEl(missionRevealEl);
+                    hideEl(nextBtn);
+                } else if (discData.mode === "discuss") {
+                    if (holderUserId) {
+                        tickerEl.innerText = "How did this mission go?";    
+                    } else {
+                        tickerEl.innerText = "Did you achieve this mission, anyway?";
+                    }
+                    showEl(nextBtn);
+                    showEl(missionRevealEl);
+                    hideEl(revealBtn);
+                }
+                const voteBtnsEl = discussionEl.querySelector(".vote-buttons");
+                if (voteBtnsEl.getAttribute("data-state") === "empty") {
+                    Object.keys((gameMissionMap)).forEach((missionUserId) => {
+                        const btn = document.createElement("button");
+                        btn.classList.add("button");
+                        btn.setAttribute("data-user", missionUserId);
+                        btn.innerText = nameMap[missionUserId];
+                        btn.addEventListener("click", (e) => {
+                            const voteUserId = e.target.getAttribute("data-user");
+                            fetch(`${API_ROOT}/api/discussion/vote/${gameId}?user=${userId}&vote=${voteUserId}`);
+                        });
+                        voteBtnsEl.appendChild(btn);
+                    });
+                    voteBtnsEl.setAttribute("data-state", "filled");
+                }
+                const voteCounterEl = document.querySelector("#vote-status");
+                const n = Object.keys(missionVotes).length;
+                if (n > 0) {
+                    voteCounterEl.innerText = `${n} player${n === 1 ? "" : "s"} voted`;
+                } else {
+                    voteCounterEl.innerText = "";
+                }
+                const voteResultEl = document.querySelector("#vote-result");
+                voteResultEl.innerText = "";
+                if (missionVotes.hasOwnProperty(userId)) {
+                    hideEl(voteBtnsEl);
+                    voteResultEl.innerText = `Voted for ${nameMap[missionVotes[userId]]}`;
+                } else {
+                    showEl(voteBtnsEl);
+                }
+            }
         }
     });
 }

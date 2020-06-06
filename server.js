@@ -315,6 +315,70 @@ app.get("/api/game/toggle/:gameid", (request, response) => {
     });
 });
 
+const nextMap = {
+    "none": "gavel",
+    "gavel": "power",
+    "power": "eye",
+    "eye": "paperclip",
+    "paperclip": "end"
+};
+
+app.get("/api/discussion/next/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    if (gameId) {
+        db.ref(`${ROOT}/games/${gameId}/discussion/active`).once("value", (snap) => {
+            const active = snap.val() || "none";
+            db.ref(`${ROOT}/games/${gameId}/discussion/mode`).set("vote").then(() => {
+                db.ref(`${ROOT}/games/${gameId}/discussion/active`).set(nextMap[active]).then(() => {
+                    response.send({ success: true });
+                }).catch((err) => {
+                    response.send({ success: false, err: err });
+                });
+            }).catch((err) => {
+                response.send({ success: false, err: err });
+            });
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId." });
+    }
+});
+
+app.get("/api/discussion/reveal/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    if (gameId) {
+        db.ref(`${ROOT}/games/${gameId}/discussion/mode`).set("discuss").then(() => {
+            response.send({ success: true });
+        }).catch((err) => {
+            response.send({ success: false, err: err });
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId." });
+    }
+});
+
+app.get("/api/discussion/vote/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const userId = request.query.user;
+    const voteUserId = request.query.vote;
+    if (gameId && userId && voteUserId) {
+        db.ref(`${ROOT}/games/${gameId}/discussion/active`).once("value", (snap) => {
+            const missionId = snap.val();
+            if (missionId) {
+                const ref = db.ref(`${ROOT}/games/${gameId}/discussion/votes/${missionId}/${userId}`);
+                ref.set(voteUserId).then(() => {
+                    response.send({ success: true });
+                }).catch((err) => {
+                    response.send({ success: false, err: err });
+                });
+            } else {
+                response.send({ success: false, message: "No missionId." });
+            }
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId, userId, or voteUserId." });
+    }
+});
+
 const listener = app.listen(process.env.PORT, () => {
     console.log("Your app is listening on port " + listener.address().port);
 });
