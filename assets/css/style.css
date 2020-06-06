@@ -162,6 +162,7 @@ p {
 .sidebar .mission .clue:hover {
     border: 2px solid purple;
     background: purple;
+    color: white;
 }
 
 .sidebar .mission .clue:hover span {

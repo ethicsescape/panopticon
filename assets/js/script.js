@@ -939,6 +939,19 @@ function updateGame() {
                     } else {
                         resSusEl.classList.add("failure");
                     }
+                    const sysMap = finalSubmission.systems || {};
+                    const systemIds = ["risk", "movement", "attention"];
+                    systemIds.forEach((sid) => {
+                        const sysEl = concEl.querySelector(`[data-system=${sid}] .status`);
+                        const wasActive = !(sid in sysMap) || sysMap[sid];
+                        if (wasActive) {
+                            sysEl.classList.add("success");
+                            sysEl.innerText = `ACTIVE`;
+                        } else {
+                            sysEl.classList.add("failure");
+                            sysEl.innerText = `DEACTIVATED`;
+                        }
+                    });
                     const resCluEl = document.querySelector("#results-clues");
                     if (resCluEl.getAttribute("data-state") === "empty") {
                         const unlockedByMap = data.unlockedby || {};
@@ -955,6 +968,7 @@ function updateGame() {
                                 </div>
                             `;
                             const div = document.createElement("div");
+                            div.classList.add("row-half");
                             div.innerHTML = clueResHtml;
                             const sc = div.querySelector("span");
                             const ci = div.querySelector(".clue");
@@ -992,6 +1006,7 @@ function updateGame() {
                     const resMisEl = document.querySelector("#results-missions");
                     Object.keys(gameMissionMap).forEach((doerId) => {
                         const div = document.createElement("div");
+                        div.classList.add("row-half");
                         const p = document.createElement("p");
                         const s1 = document.createElement("strong");
                         s1.innerText = nameMap[doerId];

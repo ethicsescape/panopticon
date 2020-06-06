@@ -40,7 +40,7 @@
                                 <span id="total-span"></span>
                             </p>
                         </div>
-                        <h3 id="ticker" class="centered">Who do you think had this mission?</h3>
+                        <h2 id="ticker" class="centered">Who do you think had this mission?</h2>
                         <p id="mission-text"></p>
                         <p class="centered">
                             <strong>VOTE: </strong>
@@ -54,27 +54,51 @@
                         </div>
                     </div>
                     <div id="conclusion" data-state="empty" class="hidden">
-                        <h2>Resolution</h2>
                         <p>Now you can read the scenario resolution to find out what happened to your chosen suspect. The password is: <strong>VICK</strong></p>
-                        <a href="./secure/resolution" class="button">View Resolution</a>
-                        <h2>Results</h2>
+                        <p class="centered">
+                            <a href="./secure/resolution" class="button">View Resolution</a>
+                        </p>
+                        <br>
+                        <h1 class="centered uppercase">Results</h1>
                         <div class="row-half">
-                            <h3>Time</h3>
+                            <h2>Time</h2>
                             <p>Escaped in <span id="results-time" class="message"></span>.</p>
-                            <h3>Suspect</h3>
-                            <p>Accused <span id="results-suspect" class="message"></span>.</p>
-                            <h3>Clues</h3>
-                            <p>Unlocked <span id="clue-count" class="message"></span> clues.</p>
-                            <div id="results-clues" data-state="empty"></div>
                         </div>
                         <div class="row-half">
-                            <h3>Rationale</h3>
-                            <p id="results-rationale"></p>
-                            <h3>Recommendations</h3>
-                            <p id="results-recommendations"></p>
-                            <h3>Missions</h3>
-                            <div id="results-missions"></div>
+                            <h2>Suspect</h2>
+                            <p>Accused <span id="results-suspect" class="message"></span>.</p>
                         </div>
+                        <div class="row-half">
+                            <h2>Rationale</h2>
+                            <p id="results-rationale"></p>
+                        </div>
+                        <div class="row-half">
+                            <h2>Recommendations</h2>
+                            <p id="results-recommendations"></p>
+                        </div>
+                        <h2>Systems</h2>
+                        <div>
+                            <div data-system="risk" class="button">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span> Risk </span>
+                                <span class="status message">ON</span>
+                            </div>
+                            <div data-system="movement" class="button">
+                                <i class="fa fa-male"></i> 
+                                <span> Movement </span>
+                                <span class="status message">ON</span>
+                            </div>
+                            <div data-system="attention" class="button">
+                                <i class="fa fa-eye"></i> 
+                                <span> Attention </span>
+                                <span class="status message">ON</span>
+                            </div>
+                        </div>
+                        <h2>Clues</h2>
+                        <p>Unlocked <span id="clue-count" class="message"></span> clues.</p>
+                        <div id="results-clues" data-state="empty"></div>
+                        <h2>Missions</h2>
+                        <div id="results-missions"></div>
                     </div>
                 </div>
             </div>
