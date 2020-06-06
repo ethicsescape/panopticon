@@ -466,6 +466,10 @@ p {
 
 /* Intro */
 
+.video-player {
+    margin: 10px;
+}
+
 .mission-row .mission-preview {
     display: inline-block;
 }
