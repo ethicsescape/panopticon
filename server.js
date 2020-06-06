@@ -166,12 +166,16 @@ function setScreenName(gameId, userId, name, override) {
                 if (screenName in invertedMap && invertedMap[screenName] !== userId) {
                     reject(`Name ${screenName} is already taken.`);
                 } else if (override) {
-                    ref.set(screenName).then(resolve).catch(reject);  
+                    ref.set(screenName).then(() => {
+                        resolve(screenName);
+                    }).catch(reject);  
                 } else {
-                    resolve();
+                    resolve(screenName);
                 }
             } else {
-                ref.set(screenName).then(resolve).catch(reject);  
+                ref.set(screenName).then(() => {
+                    resolve(screenName);
+                }).catch(reject);  
             }
         });
     });
@@ -203,8 +207,8 @@ app.get("/api/name/:gameid", (request, response) => {
     const userId = request.query.user;
     const name = request.query.name;
     if (gameId && userId && name) {
-        setScreenName(gameId, userId, name, true).then(() => {
-            response.send({ success: true });
+        setScreenName(gameId, userId, name, true).then((screenName) => {
+            response.send({ success: true, name: screenName });
         }).catch((err) => {
             response.send({ success: false, message: err });
         });

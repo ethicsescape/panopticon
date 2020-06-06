@@ -520,6 +520,7 @@ function doIntro() {
         const name = screenNameInputEl.value;
         fetch(`${API_ROOT}/api/name/${gameId}?user=${userId}&name=${encodeURI(name)}`).then((res) => {
             if (res.success) {
+                screenNameInputEl.value = res.name;
                 showMessage(nameMsgEl, true, "Successfully updated screen name!");
             } else {
                 showMessage(nameMsgEl, false, res.message || "Failed to update screen name,");
@@ -837,7 +838,7 @@ function updateGame() {
         }
         if (introEl) {
             const screenNameInputEl = document.querySelector("#screen-name");
-            if (screenNameInputEl && userId in data.names) {
+            if (screenNameInputEl && userId in data.names && !screenNameInputEl.value) {
                 screenNameInputEl.value = data.names[userId];
             }
             Object.keys((missionMap)).forEach((missionId) => {
@@ -887,6 +888,12 @@ function updateGame() {
             const suspectTag = document.querySelector(`[data-shopper="${suspectId}"]`);
             if (suspectTag && suspectTag.innerText.indexOf("selected") < 0) {
                 suspectTag.innerText = `${suspectTag.innerText} (the suspect you selected)`;
+                suspectTag.classList.add("message");
+                if (btoa(finalSubmission.suspect) === "U2hvcHBlciAjNjg3MQ==") {
+                    suspectTag.classList.add("success");
+                } else {
+                    suspectTag.classList.add("failure");
+                }
             }
         }
         const discussionEl = document.querySelector("[data-view=discussion]");
@@ -996,7 +1003,7 @@ function updateGame() {
                             Object.keys(popularMap[doerId]).forEach((mid) => {
                                 const li = document.createElement("li");
                                 const x = popularMap[doerId][mid];
-                                li.innerText = `${x} player${x === 1 ? "" : "s"} thought were trying to ${missionMap[mid].recap}`;
+                                li.innerText = `${x} player${x === 1 ? "" : "s"} thought they were trying to ${missionMap[mid].recap}`;
                                 if (mid === gameMissionMap[doerId]) {
                                     li.classList.add("message");
                                     li.classList.add("success");
