@@ -25,6 +25,8 @@ Furthermore, even though the store security system shows Rhule leaving the store
 
 Faulk admitted to taking the jersey off the rack, entering a fitting room, using a magnet to deactivate the anti-theft tag on the merchandise, wearing the jersey under his sweatshirt, and exiting the store without intent to purchase the merchandise at approximately 5:03 PM.
 
+Furthermore, Falk admitted to creating an email account (topquarterback95@gmail.com) and using it to open an Ebay account under his control. He admitted to using this email to sign up for promotions and discounts from the store, using Rhule's name and address. Faulk admitted that his intent was to link Rhule to the theft and resale of the jersey and that the email account did not belong to Rhule.
+
 Furthermore, Faulk admitted to hiding the stolen merchandise in an exercise bottle and placing it in Rhule’s athletic bag during a school-sponsored practice. Faulk admitted that his intent was to frame Rhule for the theft.
 
 Furthermore, Faulk admitted to procuring and submitting a form from the store’s website to request the deletion of security data pertaining to Jim Rhule, without the consent of Rhule. Faulk admitted that his intent was to raise suspicion that Rhule stole merchandise from the store.
