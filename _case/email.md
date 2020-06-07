@@ -22,9 +22,9 @@ layout: case
             </a>
         </li>
         <li class="email-holder">
-            <a href="../secure/vendor" class="email">
+            <a href="../secure/pledge" class="email">
                 <i class="fa fa-lock"></i>
-                <span> FWD: RE: Movement Layer Access Key</span>
+                <span> RE: FWD: RE: Local Student-Run Newspaper</span>
                 <span class="email-time">5:59 PM</span>
             </a>
         </li>

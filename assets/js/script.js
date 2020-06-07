@@ -180,7 +180,7 @@ const sidebarClues = [
     "risk",
     "movement",
     "attention",
-    "vendor",
+    "pledge",
     "offer",
     "removal",
     "lookup",

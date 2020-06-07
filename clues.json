@@ -5,7 +5,7 @@
         "preview": "Risk Layer"
     },
     "movement": {
-        "password": "fclt77",
+        "password": "cease",
         "document": "../case/movement",
         "preview": "Movement Layer"
     },
@@ -14,10 +14,10 @@
         "document": "https://docs.google.com/spreadsheets/d/1ZNn6xIKWSZe-_ehCBjWUklcSktQuOvVBcteoOHkrjqQ/edit?usp=sharing",
         "preview": "Attention Layer"
     },
-    "vendor": {
+    "pledge": {
         "password": "dmw0723",
-        "document": "../document/email-movement-code",
-        "preview": "Vendor Email for Movement Access"
+        "document": "../document/email-student-newspaper",
+        "preview": "Email from Local Student-Run Newspaper"
     },
     "offer": {
         "password": "fanon",
