@@ -173,6 +173,34 @@ const missionMap = MISSIONS.reduce((agg, val) => {
     return agg;
 }, {});
 
+const limitMins = 59;
+const limitSecs = 59;
+
+const sidebarClues = [
+    "risk",
+    "movement",
+    "attention",
+    "vendor",
+    "offer",
+    "removal",
+    "lookup",
+];
+
+function setNewGameID(newGameId) {
+    if (localStorage.hasOwnProperty(GAME_PROPERTY)) {
+        const oldGameId = localStorage.getItem(GAME_PROPERTY);
+        if (oldGameId !== newGameId) {
+            localStorage.removeItem(VIEWED_MISSION_PROPERTY);
+            sidebarClues.forEach((clueId) => {
+                localStorage.removeItem(`panopticon_clue_${clueId}`);
+            });
+            localStorage.setItem(GAME_PROPERTY, newGameId);
+        }
+    } else {
+        localStorage.setItem(GAME_PROPERTY, newGameId);
+    }
+}
+
 // Wake up game server
 fetch(API_ROOT);
 
@@ -226,7 +254,7 @@ if (viewId === "secure") {
             messageEl.appendChild(linkEl);
         } else {
             messageEl.classList.add("failure");
-            messageEl.innerText = `Incorrect password (${attempts} attempts).`;
+            messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;
         }
     }
     button.addEventListener("click", accessDocument);
@@ -601,7 +629,7 @@ function doDiscussion() {
 function doJoin() {
     if (window.location.href.indexOf("?join=") > -1) {
         const linkGameId = window.location.href.split("?join=")[1].split("&")[0];
-        localStorage.setItem(GAME_PROPERTY, linkGameId);
+        setNewGameID(linkGameId);
     }
     const gameId = localStorage.getItem(GAME_PROPERTY);
     if (!gameId) {
@@ -700,7 +728,7 @@ if (viewId === "home") {
         button.addEventListener("click", (e) => {
             fetch(`${API_ROOT}/api/game/create`).then((res) => {
                 if (res.success) {
-                    localStorage.setItem(GAME_PROPERTY, res.gameId);
+                    setNewGameID(res.gameId);
                     window.location = `${SITE_ROOT}?join=${res.gameId}`;
                     // doJoin(); 
                 } else {
@@ -722,19 +750,6 @@ if (viewId === "intro") {
 if (viewId === "discussion") {
     doDiscussion();
 }
-
-const limitMins = 59;
-const limitSecs = 59;
-
-const sidebarClues = [
-    "risk",
-    "movement",
-    "attention",
-    "vendor",
-    "offer",
-    "removal",
-    "lookup",
-];
 
 function updateGame() {
     const gameId = localStorage.getItem(GAME_PROPERTY);
