@@ -523,6 +523,23 @@ p {
     padding: 10px;
 }
 
+span#mission-reminder {
+    position: relative;
+    display: inline-block;
+    background: purple;
+    color: white;
+    top: -46px;
+    margin-left: 60px;
+    padding: 10px;
+    line-height: 18px;
+    width: 120px;
+    text-align: left;
+}
+
+span#mission-reminder.hidden {
+    display: none;
+}
+
 /* Cover */
 
 .cover {

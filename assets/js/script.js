@@ -120,6 +120,7 @@ const db = window.firebase ? firebase.database() : false;
 const PROD_PROPERTY = "panopticon_force_prod";
 const GAME_PROPERTY = "panopticon_game_id";
 const USER_PROPERTY = "panopticon_user_id";
+const VIEWED_MISSION_PROPERTY = "panopticon_viewed_mission";
 const FIREBASE_ROOT = "panopticon";
 const FORCE_PROD = localStorage.hasOwnProperty(PROD_PROPERTY);
 const API_ROOT = getAPIRoot(FORCE_PROD);
@@ -182,6 +183,11 @@ console.log(tabId);
 const tabEl = document.querySelector(`[data-tab='${tabId}']`);
 if (tabEl) {
     tabEl.classList.add("selected");  
+}
+
+const remMisEl = document.querySelector("#mission-reminder");
+if (!localStorage.hasOwnProperty(VIEWED_MISSION_PROPERTY) && remMisEl) {
+    showEl(remMisEl);
 }
 
 if (viewId === "secure") {
@@ -670,6 +676,7 @@ function doJoin() {
             if (res.success) {
                 localStorage.removeItem(GAME_PROPERTY);
                 localStorage.removeItem(USER_PROPERTY);
+                localStorage.removeItem(VIEWED_MISSION_PROPERTY);
                 sidebarClues.forEach((clueId) => {
                     localStorage.removeItem(`panopticon_clue_${clueId}`);
                 });
@@ -813,7 +820,9 @@ function updateGame() {
             missionIconEl.classList.remove("hidden");
             missionIconEl.addEventListener("click", (e) => {
                 if (coverEl) {
-                    coverEl.classList.remove("hidden");
+                    hideEl(remMisEl);
+                    showEl(coverEl);
+                    localStorage.setItem(VIEWED_MISSION_PROPERTY, true);
                 }
             });
         }
@@ -828,7 +837,7 @@ function updateGame() {
             popupEl.setAttribute("data-state", "filled");
             coverEl.addEventListener("click", (e) => {
                 if (e.target == coverEl || e.target == closeEl) {
-                    coverEl.classList.add("hidden");
+                    hideEl(coverEl);
                 }
             });
         }
