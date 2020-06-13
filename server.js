@@ -303,13 +303,14 @@ app.get("/api/game/decide/:gameid", (request, response) => {
     const suspect = request.query.suspect;
     const rationale = request.query.rationale;
     const recommendations = request.query.recommendations;
-    db.ref(`${ROOT}/games/${gameId}/systems`).once("value", (snap) => {
-        const systems = snap.val() || {};
+    db.ref(`${ROOT}/games/${gameId}`).once("value", (snap) => {
+        const data = snap.val() || {};
         const decision = {
             suspect,
             rationale,
             recommendations,
-            systems,
+            systems: data.systems || {},
+            unlockedby: data.unlockedby || {},
             timestamp: firebase.database.ServerValue.TIMESTAMP,
         };
         db.ref(`${ROOT}/games/${gameId}/decisions`).push(decision).then(() => {

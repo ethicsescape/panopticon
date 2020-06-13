@@ -330,10 +330,10 @@ if (tabId === "activate") {
                         if (res.success) {
                             showMessage(sysMessageEl, true, `Operation confirmed. Successfully updated ${systemId}.`);
                         } else {
-                            showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game master.`);
+                            showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game facilitator.`);
                         }
                     }).catch((err) => {
-                        showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game master.`);
+                        showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game facilitator.`);
                     });
                 } else {
                     showMessage(sysMessageEl, false, `Operation not confirmed. Did not update ${systemId}.`);
@@ -353,20 +353,15 @@ if (tabId === "decision") {
     const button = document.querySelector("[data-view=decision] button");
     const messageEl = document.querySelector("[data-view=decision] .message");
     const processDecision = () => {
-        if (messageEl.classList.contains("failure")) {
-            messageEl.classList.remove("failure");
-        }
         messageEl.innerText = "";
         const suspect = select.value;
         if (!(suspect in validSuspects)) {
-            messageEl.classList.add("failure");
-            messageEl.innerText = "Please select a valid suspect.";
+            showMessage(messageEl, false, "Please select a valid suspect.");
             return;
         }
         const rationale = textareaRat.value;
         if (rationale.split(" ").length < 5) {
-            messageEl.classList.add("failure");
-            messageEl.innerText = "Please provide a more detailed rationale.";
+            showMessage(messageEl, false, "Please provide a more detailed rationale.");
             return;
         }
         if (secretFormEl.classList.contains("hidden")) {
@@ -375,24 +370,21 @@ if (tabId === "decision") {
         }
         const recommendations = textareaRec.value;
         if (recommendations.split(" ").length < 5) {
-            messageEl.classList.add("failure");
-            messageEl.innerText = "Please provide more detailed recommendations.";
+            showMessage(messageEl, false, "Please provide more detailed recommendations.");
             return;
         }
         const gameId = localStorage.getItem(GAME_PROPERTY);
         const query = `suspect=${encodeURIComponent(suspect)}&rationale=${encodeURIComponent(rationale)}&recommendations=${encodeURIComponent(recommendations)}`;
         fetch(`${API_ROOT}/api/game/decide/${gameId}?${query}`).then((res) => {
             if (res.success) {
-                messageEl.classList.add("success");
+                showMessage(messageEl, true, "Successfully submitted!");
                 const endLink = document.querySelector("#end-link");
                 showEl(endLink);
             } else {
-                messageEl.classList.add("failure");
-                messageEl.innerText = "Failed to submit. Contact the game master.";
+                showMessage(messageEl, false, "Failed to submit. Contact the game facilitator.");
             }
         }).catch((err) => {
-            messageEl.classList.add("failure");
-            messageEl.innerText = "Failed to submit. Contact the game master.";
+            showMessage(messageEl, false, "Failed to submit. Contact the game facilitator.");
         });
     };
     button.addEventListener("click", processDecision);
@@ -703,7 +695,7 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
         spanOff.innerText = `deactivated ${nOff} system${nOff === 1 ? "" : "s"}`;
         const resCluEl = document.querySelector("#results-clues");
         if (resCluEl.getAttribute("data-state") === "empty") {
-            const unlockedByMap = data.unlockedby || {};
+            const unlockedByMap = finalSubmission.unlockedby || {};
             let clueCount = 0;
             resCluEl.setAttribute("data-state", "filled");
             sidebarClues.forEach((clueId) => {
