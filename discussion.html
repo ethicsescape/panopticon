@@ -39,27 +39,12 @@
                     </div>
                     <div id="mission-box" class="hidden">
                         <br>
-                        <div id="mission-reveal" class="centered message success">
-                            <p>
-                                <span id="name-span"></span>
-                                <span> had the mission </span>
-                                <span id="mission-span"></span>
-                            </p>
-                            <p>
-                                <span id="total-span"></span>
-                            </p>
-                        </div>
-                        <h2 id="ticker" class="centered">Who do you think had this mission?</h2>
-                        <p id="mission-text"></p>
-                        <p class="centered">
-                            <strong>VOTE: </strong>
-                            <span class="vote-buttons" data-state="empty"></span>
-                            <span id="vote-result" class="message success"></span>
-                        </p>
-                        <p id="vote-status" class="message success centered"></p>
+                        <h2 class="centered">Which player do you think had each mission?</h2>
+                        <div class="mission-vote-table" data-state="empty"></div>
                         <div class="centered">
-                            <button id="reveal-btn" class="button primary" data-state="nohook">Reveal Player</button>
-                            <button id="next-btn" class="button secondary hidden" data-state="nohook">Next Mission</button>
+                            <p id="vote-submit-msg" class="message"></p>
+                            <button id="vote-btn" class="button primary">Vote</button>
+                            <button id="skip-btn" class="button secondary">Skip</button>
                         </div>
                     </div>
                     <div id="conclusion" data-state="empty" class="hidden">
@@ -86,6 +71,7 @@
                             <p id="results-recommendations"></p>
                         </div>
                         <h2>Systems</h2>
+                        <p>Left <span id="results-on" class="message success"></span> and <span id="results-off" class="message failure"></span>.</p>
                         <div>
                             <div data-system="risk" class="button">
                                 <i class="fa fa-shopping-cart"></i>

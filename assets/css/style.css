@@ -446,7 +446,7 @@ p {
     margin: 20px auto !important;
 }
 
-@media screen and (max-width: 930px) {
+@media screen and (max-width: 640px) {
 
     .replay-player {
         width: 300px;
@@ -611,3 +611,36 @@ span#mission-reminder.hidden {
     }
 
 }
+
+.mission-vote-row {
+    text-align: center;
+}
+
+.mission-vote-row .mission-vote-cell {
+    text-align: left;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 auto;
+}
+
+.mission-vote-cell:nth-child(1) {
+    width: 70%;
+}
+
+.mission-vote-row select {
+    width: auto !important;
+    margin: 10px 20px;
+}
+
+@media screen and (max-width: 640px) {
+
+    .mission-vote-cell:nth-child(1) {
+        width: 100%;
+    }
+
+}
+
+
+
+
+
