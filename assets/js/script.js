@@ -398,119 +398,18 @@ if (tabId === "decision") {
     button.addEventListener("click", processDecision);
 }
 
-function leftpad(d) {
-    const s = `${d}`;
-    if (s.length < 2) {
-        return `0${d}`;
-    }
-    return s;
-}
-
-function renderPoints(polyLineEl, points)  {
-    const s = polyLineEl.parentElement.clientWidth;
-    const pointData = points.map(({ x, y }) => `${x * s},${y * s}`).join(" ");
-    polyLineEl.setAttribute("points", pointData);
-}
-
-function renderPerson(polyLineEl, circleEl, step)  {
-    const s = polyLineEl.parentElement.clientWidth;
-    circleEl.setAttribute("cx", step.x * s);
-    circleEl.setAttribute("cy", step.y * s);
-    circleEl.setAttribute("r", 5);
-}
-
-function renderClock(clockEl, elapsedMs, settings = {})  {
-    const startHours = settings.startHours || 0;
-    const startMins = settings.startMins || 0;
-    const startSecs = settings.startSecs || 0;
-    const timeFactor = settings.timeFactor || 1;
-    const startHoursSecs = startHours * 60 * 60 || 0;
-    const startMinsSecs = startMins * 60 || 0;
-    const elapsedSecs = timeFactor * (elapsedMs / 1000);
-    const totalSecs = startHoursSecs + startMinsSecs + startSecs + elapsedSecs;
-    const hours = Math.floor(totalSecs / (60 * 60));
-    const mins = Math.floor((totalSecs % (60 * 60)) / (60));
-    const secs = Math.floor(totalSecs % 60);
-    const time = `${leftpad(hours)}:${leftpad(mins)}:${leftpad(secs)} PM`;
-    clockEl.innerText = time;
-}
-
-let replayInterval;
-
-function makeReplay(replayEl, personEl, clockEl, replay, settings) {
-    return () => {
-        clearInterval(replayInterval);
-        let seen = [];
-        let stepTime = Date.now();
-        let i = 0;
-        const startMs = Date.now();
-        let isReady = true;
-        replayInterval = setInterval(() => {
-            const elapsed = Date.now() - startMs;
-            renderClock(clockEl, elapsed, settings);
-            if (isReady) {
-                const step = replay[i];
-                seen.push(step);
-                renderPoints(replayEl, seen);
-                renderPerson(replayEl, personEl, step);
-                stepTime = Date.now();
-                i++;
-                if (i >= replay.length) {
-                    clearInterval(replayInterval);
-                }
-                isReady = false;
-            } else if (Date.now() - stepTime > replay[i].t) {
-                isReady = true;
+if (tabId === "movement") {
+    Array.from(document.querySelectorAll(".replay-toggle")).forEach((toggleEl) => {
+        toggleEl.addEventListener("click", (e) => {
+            if (toggleEl.classList.contains("closed")) {
+                toggleEl.classList.remove("closed");
+                toggleEl.classList.add("open");
+            } else {
+                toggleEl.classList.remove("open");
+                toggleEl.classList.add("closed");
             }
-        }, 10);
-    }
-}
-
-function showMovementData(monitorEl, data) {
-    const timeFactor = 15;
-    const replayEl = monitorEl.querySelector("polyline");
-    const personEl = monitorEl.querySelector("circle");
-    const clockEl = monitorEl.querySelector(".clock");
-    const play = makeReplay(replayEl, personEl, clockEl, data.points, {
-        startHours: data.startHours,
-        startMins: data.startMins,
-        startSecs: data.startSecs,
-        timeFactor
+        });
     });
-    monitorEl.parentElement.classList.remove("hidden");
-    const btn = document.querySelector("[data-view=replay] #play-btn");
-    btn.classList.remove("hidden");
-    btn.addEventListener("click", (e) => {
-        btn.innerText = "Restart";
-        play();
-    });
-}
-
-if (viewId === "replay") {
-    const monitorSize = 500;
-    const monitorEl = document.querySelector("[data-view=replay] .monitor");
-    monitorEl.style.width = `${monitorSize}px`;
-    monitorEl.style.height = `${monitorSize}px`;
-    const replayEl = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    monitorEl.querySelector("svg").appendChild(replayEl);
-    const personEl = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    monitorEl.querySelector("svg").appendChild(personEl);
-    const clockEl = monitorEl.querySelector(".clock");
-    const select = document.querySelector("[data-view=replay] select");
-    const btn = document.querySelector("[data-view=replay] #load-btn");
-    const moveMsgEl = document.querySelector("[data-view=replay] .message");
-
-    clearInterval(replayInterval);
-    document.querySelector("[data-view=replay] #play-btn").innerText = "Play";
-    replayEl.setAttribute("points" , "");
-    personEl.setAttribute("r" , 0);
-    clockEl.innerText = "";
-    const suspectId = document.querySelector("#ox").innerText;
-    console.log(suspectId);
-    const rawReplayData = document.querySelector("#leopard").innerText;
-    const replayData = JSON.parse(rawReplayData);
-    showMessage(moveMsgEl, true, `Successfully loaded movement data for Shopper #${suspectId}.`);
-    showMovementData(monitorEl, replayData);
 }
 
 if (tabId === "lookup" && viewId === "case") {
@@ -751,6 +650,14 @@ if (viewId === "discussion") {
     doDiscussion();
 }
 
+function leftpad(d) {
+    const s = `${d}`;
+    if (s.length < 2) {
+        return `0${d}`;
+    }
+    return s;
+}
+
 function updateGame() {
     const gameId = localStorage.getItem(GAME_PROPERTY);
     const userId = localStorage.getItem(USER_PROPERTY);
@@ -778,7 +685,7 @@ function updateGame() {
                     timerEl.innerText = "OVER";
                 } else {
                     const sign = timeRemaining ? "" : "+";
-                    timerEl.innerText = `${sign}${minsLeft.length == 1 ? "0" + minsLeft : minsLeft}:${secsLeft.length == 1 ? "0" + secsLeft : secsLeft}`;
+                    timerEl.innerText = `${sign}${leftpad(minsLeft)}:${leftpad(secsLeft)}`;
                 }
             };
             updateTimer();
