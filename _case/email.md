@@ -10,7 +10,7 @@ layout: case
         <li id="email-removal" class="email-holder hidden">
             <a href="../secure/removal" class="email">
                 <i class="fa fa-lock"></i>
-                <span> Removal Request</span>
+                <span> NEW: Removal Request</span>
                 <span class="email-time">6:16 PM</span>
             </a>
         </li>

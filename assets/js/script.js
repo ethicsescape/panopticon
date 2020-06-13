@@ -224,9 +224,11 @@ if (viewId === "secure") {
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
     input.focus();
+    let alreadyUnlocked = false;
     if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
         const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
         input.value = storedCode;
+        alreadyUnlocked = true;
         showMessage(messageEl, true, "Clue already unlocked.");
     }
     let attempts = 0;
@@ -243,27 +245,34 @@ if (viewId === "secure") {
                 messageEl.classList.remove("failure");
             }
             messageEl.classList.add("success");
-            let countdown = 3;
-            messageEl.innerText = `Access granted. Opening in ${countdown}...`;
-            const interval = setInterval(() => {
-                countdown--;
+            if (!alreadyUnlocked) {
+                let countdown = 3;
                 messageEl.innerText = `Access granted. Opening in ${countdown}...`;
-                if (countdown <= 0) {
-                    clearInterval(interval);
-                    // Navigate automatically
-                    window.location = viper;
-                    // Fallback that should not be needed
-                    const isExternalLink = viper.indexOf("http") === 0;
-                    const linkEl = document.createElement("a");
-                    linkEl.href = viper;
-                    if (isExternalLink) {
-                        linkEl.target = "_blank";
+                const interval = setInterval(() => {
+                    countdown--;
+                    messageEl.innerText = `Access granted. Opening in ${countdown}...`;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        // Navigate automatically
+                        window.location = viper;
+                        // Fallback that should not be needed
+                        const linkEl = document.createElement("a");
+                        linkEl.href = viper;
+                        linkEl.innerText = "Access granted. Click here.";
+                        messageEl.innerText = "";
+                        messageEl.appendChild(linkEl);
                     }
-                    linkEl.innerText = "Access granted. Click here.";
-                    messageEl.innerText = "";
-                    messageEl.appendChild(linkEl);
-                }
-            }, 1000);
+                }, 1000);
+            } else {
+                // Navigate automatically
+                window.location = viper;
+                // Fallback that should not be needed
+                const linkEl = document.createElement("a");
+                linkEl.href = viper;
+                linkEl.innerText = "Access granted. Click here.";
+                messageEl.innerText = "";
+                messageEl.appendChild(linkEl);
+            }
         } else {
             messageEl.classList.add("failure");
             messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;

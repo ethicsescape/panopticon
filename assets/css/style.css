@@ -207,6 +207,18 @@ p {
     display: none;
 }
 
+.show-mobile {
+    display: none;
+}
+
+@media screen and (max-width: 640px) {
+
+    .show-mobile {
+        display: block;
+    }
+
+}
+
 /* Forms */
 
 .content .form {
@@ -640,7 +652,9 @@ span#mission-reminder.hidden {
 
 }
 
+/* Tables */
 
-
-
-
+.table-holder {
+    width: 100%;
+    overflow-x: scroll;
+}

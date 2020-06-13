@@ -1,7 +1,7 @@
 {
     "risk": {
         "password": "krichev",
-        "document": "https://docs.google.com/spreadsheets/d/19xPu2_ib1afFGR5wCUfyjSrun_ve5P0xdIgca0iyqLs/edit?usp=sharing",
+        "document": "../document/rankings",
         "preview": "Risk Layer"
     },
     "movement": {
@@ -11,7 +11,7 @@
     },
     "attention": {
         "password": "lyon",
-        "document": "https://docs.google.com/spreadsheets/d/1ZNn6xIKWSZe-_ehCBjWUklcSktQuOvVBcteoOHkrjqQ/edit?usp=sharing",
+        "document": "../document/eye-tracking",
         "preview": "Attention Layer"
     },
     "pledge": {
