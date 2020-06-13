@@ -243,15 +243,27 @@ if (viewId === "secure") {
                 messageEl.classList.remove("failure");
             }
             messageEl.classList.add("success");
-            const isExternalLink = viper.indexOf("http") === 0;
-            const linkEl = document.createElement("a");
-            linkEl.href = viper;
-            if (isExternalLink) {
-                linkEl.target = "_blank";
-            }
-            linkEl.innerText = "Access granted. Click here.";
-            messageEl.innerText = "";
-            messageEl.appendChild(linkEl);
+            let countdown = 3;
+            messageEl.innerText = `Access granted. Opening in ${countdown}...`;
+            const interval = setInterval(() => {
+                countdown--;
+                messageEl.innerText = `Access granted. Opening in ${countdown}...`;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    // Navigate automatically
+                    window.location = viper;
+                    // Fallback that should not be needed
+                    const isExternalLink = viper.indexOf("http") === 0;
+                    const linkEl = document.createElement("a");
+                    linkEl.href = viper;
+                    if (isExternalLink) {
+                        linkEl.target = "_blank";
+                    }
+                    linkEl.innerText = "Access granted. Click here.";
+                    messageEl.innerText = "";
+                    messageEl.appendChild(linkEl);
+                }
+            }, 1000);
         } else {
             messageEl.classList.add("failure");
             messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;
