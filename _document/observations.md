@@ -23,7 +23,7 @@ By the way, our previous head of loss prevention said you would need access to t
 
 Here is the code: **dmw0723**
 
-Look for the subject line: [RE: FWD: RE: Local Student-Run Newspaper](../case/email)
+Look for the subject line: [Movement Layer Training](../case/email)
 
 This password expires in one hour and I don’t know which email it opens. Other individual emails may be password-protected too, you’ll have to figure those out on your own.
 

@@ -1,0 +1,108 @@
+{
+  "scenes": [
+    {
+      "id": 1,
+      "caption": "Three boxes overlaid on an image of a gift shop. Box J has a light face looking down. Box O has a light face looking to the side. Box R has a headless mannequin. Two more headless mannequins are in the foreground and not part of any box. Four more faces are in the background.",
+      "boxes": [
+        {
+          "letter": "J",
+          "has_face": true
+        },
+        {
+          "letter": "O",
+          "has_face": true
+        },
+        {
+          "letter": "R",
+          "has_face": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "caption": "One box overlaid on an image of a clothing boutique. Box Y has a light face.",
+      "boxes": [
+        {
+          "letter": "Y",
+          "has_face": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "caption": "Three boxes overlaid on an image of a t-shirt shop. Box B has a dark face. Box P has a mannequin head with a hat. Box E has a mannequin head with a hat. One more mannequin is in the foreground and not part of any box.",
+      "boxes": [
+        {
+          "letter": "B",
+          "has_face": true
+        },
+        {
+          "letter": "P",
+          "has_face": false
+        },
+        {
+          "letter": "E",
+          "has_face": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "caption": "Six boxes overlaid on an image of a train station platform. Box U has a light face. Box O has a light face. Box L has a dark face with a hat. Box A has a dark face with a hat and looking to the side. Box Q has a face reflected in a mirror. Box M has a dark face with a backwards hat. Two more dark faces in the foreground are not part of any box. One dark face is only partially in the image.",
+      "boxes": [
+        {
+          "letter": "U",
+          "has_face": true
+        },
+        {
+          "letter": "O",
+          "has_face": true
+        },
+        {
+          "letter": "L",
+          "has_face": true
+        },
+        {
+          "letter": "A",
+          "has_face": true
+        },
+        {
+          "letter": "Q",
+          "has_face": false
+        },
+        {
+          "letter": "M",
+          "has_face": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "caption": "Three boxes overlaid on an image of a mall escalator. Box W has a light face looking to the side. Box I has a face with a hat and looking down. Box N has the back of a face.",
+      "boxes": [
+        {
+          "letter": "W",
+          "has_face": true
+        },
+        {
+          "letter": "I",
+          "has_face": true
+        },
+        {
+          "letter": "N",
+          "has_face": true
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "caption": "One box overlaid on an image of a shopping mall. Box I has a light face. Two dark faces in the foreground are not part of any box.",
+      "boxes": [
+        {
+          "letter": "I",
+          "has_face": true
+        }
+      ]
+    }
+  ]
+}

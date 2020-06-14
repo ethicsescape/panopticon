@@ -5,7 +5,7 @@
         "preview": "Risk Layer"
     },
     "movement": {
-        "password": "cease",
+        "password": "joybuolamwini",
         "document": "../case/movement",
         "preview": "Movement Layer"
     },
@@ -14,10 +14,10 @@
         "document": "../document/eye-tracking",
         "preview": "Attention Layer"
     },
-    "pledge": {
+    "training": {
         "password": "dmw0723",
-        "document": "../document/email-student-newspaper",
-        "preview": "Email from Local Student-Run Newspaper"
+        "document": "../document/email-training",
+        "preview": "Movement Layer Training"
     },
     "offer": {
         "password": "fanon",

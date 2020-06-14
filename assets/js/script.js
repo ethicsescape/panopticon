@@ -180,7 +180,7 @@ const sidebarClues = [
     "risk",
     "movement",
     "attention",
-    "pledge",
+    "training",
     "offer",
     "removal",
     "lookup",
@@ -451,6 +451,33 @@ if (tabId === "lookup" && viewId === "case") {
         if (e.keyCode === 13) {
             handleSubmit();
         }
+    });
+}
+
+if (tabId === "face-detection" && viewId === "case") {
+    const codeSpan = document.querySelector("#training-code");
+    Array.from(document.querySelectorAll(".box-label")).forEach((box) => {
+        Array.from(box.querySelectorAll(".button")).forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const label = btn.getAttribute("data-label");
+                const letter = box.querySelector(".box-letter");
+                if (letter.classList.contains("is-face")) {
+                    letter.classList.remove("is-face");
+                }
+                if (letter.classList.contains("not-face")) {
+                    letter.classList.remove("not-face");
+                }
+                letter.classList.add(label);
+                const accessCode = Array.from(document.querySelectorAll(".box-letter")).map((el) => {
+                    if (el.classList.contains("is-face")) {
+                        return el.getAttribute("data-letter");
+                    } else {
+                        return "";
+                    }
+                }).join("");
+                codeSpan.innerText = accessCode ? accessCode : "---";
+            });
+        });
     });
 }
 
