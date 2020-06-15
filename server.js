@@ -4,6 +4,7 @@ const app = express();
 const fs = require("fs");
 const dotenv = require("dotenv");
 const firebase = require("firebase-admin");
+const {google} = require('googleapis');
 
 dotenv.config();
 
@@ -73,6 +74,20 @@ const animalNames = [
     "xerus",
     "yak",
     "zebra"
+];
+
+const DRIVE_CREDENTIALS = {
+    "client_id": process.env.GOOGLE_API_client_id,
+    "project_id": process.env.GOOGLE_API_project_id,
+    "auth_uri": process.env.GOOGLE_API_auth_uri,
+    "token_uri": process.env.GOOGLE_API_token_uri,
+    "auth_provider_x509_cert_url": process.env.GOOGLE_API_auth_provider_x509_cert_url,
+    "client_secret": process.env.GOOGLE_API_client_secret,
+};
+
+const DRIVE_SCOPES = [
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.file"
 ];
 
 app.use(cors({
@@ -386,6 +401,95 @@ app.get("/api/discussion/vote/:gameid", (request, response) => {
         });
     } else {
         response.send({ success: false, message: "Missing gameId, userId, or vote data." });
+    }
+});
+
+/**
+ * Based on Quickstart: https://developers.google.com/docs/api/quickstart/nodejs
+ */
+function getAuthUrl(redirectUrl) {
+    return new Promise((resolve, reject) => {
+        const {client_secret, client_id} = DRIVE_CREDENTIALS;
+        const oAuth2Client = new google.auth.OAuth2(
+                client_id, client_secret, redirectUrl);
+        const authUrl = oAuth2Client.generateAuthUrl({
+            access_type: "offline",
+            scope: DRIVE_SCOPES,
+        });
+        resolve(authUrl);
+    });
+}
+
+/**
+ * Based on Quickstart: https://developers.google.com/docs/api/quickstart/nodejs
+ */
+function createNotepad(redirectUrl, code) {
+    return new Promise((resolve, reject) => {
+        const {client_secret, client_id} = DRIVE_CREDENTIALS;
+        const oAuth2Client = new google.auth.OAuth2(
+                client_id, client_secret, redirectUrl);
+        oAuth2Client.getToken(code, (err, token) => {
+            if (err) return reject(err);
+            oAuth2Client.setCredentials(token);
+            const drive = google.drive({version: "v3", auth: oAuth2Client});
+            drive.files.copy({
+                fileId: NOTEPAD_FILE_ID,
+            }, (err, fileRes) => {
+                if (err) return reject(err);
+                drive.permissions.create({
+                    fileId: fileRes.data.id,
+                    resource: {
+                        role: "writer",
+                        type: "anyone",
+                        value: "anyone",
+                        withLink: true
+                    }
+                }, (err, permRes) => {
+                    if (err) return reject(err);
+                    resolve(fileRes.data.id);
+                });
+            });
+        });
+    });
+}
+
+const NOTEPAD_FILE_ID = "1Nt1m6yHxT6oTDLtRUzYTkSsvR7ZkwXkp_FdiSfyYBTg";
+const FAILURE_DRIVE_PERMISSION = "Sorry, we didn't get your permission. Try reloading or using a different Google account.";
+
+app.get("/api/notepad/authorize/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const redirectUrl = request.query.redirect;
+    if (gameId && redirectUrl) {
+        getAuthUrl(redirectUrl).then((authUrl) => {
+            response.send({
+                success: true,
+                message: "Redirecting you to get your permission to create a Google Doc.",
+                url: authUrl
+            });
+        }).catch((err) => {
+            response.send({ success: false, message: FAILURE_DRIVE_PERMISSION, err: err });
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId or redirectUrl." });
+    }
+});
+
+app.get("/api/notepad/create/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const authCode = request.query.code;
+    const redirectUrl = request.query.redirect;
+    if (gameId && authCode) {
+        createNotepad(redirectUrl, authCode).then((fileId) => {
+            db.ref(`${ROOT}/games/${gameId}/doc`).set(fileId).then(() => {
+                response.send({ success: true, message: "Successfully created your team's shared notepad. Reloading the page..." });
+            }).catch((err) => {
+                response.send({ success: false, message: FAILURE_DRIVE_PERMISSION, err: err });
+            });
+        }).catch((err) => {
+            response.send({ success: false, message: FAILURE_DRIVE_PERMISSION, err: err });
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId or authCode." });
     }
 });
 

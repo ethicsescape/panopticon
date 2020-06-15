@@ -557,6 +557,60 @@ function doIntro() {
             console.error(err);
         });
     });
+    // Create Shared Notepad
+    const showDriveError = (el) => {
+        el.innerHTML = "";
+        const a = document.createElement("a");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.href = "https://myaccount.google.com/permissions";
+        a.innerText = "myaccount.google.com/permissions"
+        const s1 = document.createElement("span");
+        s1.innerText = "Sorry, we didn't get your permission. Possibly because this account has already been used. Try using a different Google account or visit ";
+        const s2 = document.createElement("span");
+        s2.innerText = " to revoke this account's permission and try again.";
+        el.appendChild(s1);
+        el.appendChild(a);
+        el.appendChild(s2);
+        if (el.classList.contains("success")) {
+            el.classList.remove("success");
+        }
+        el.classList.add("failure");
+    }
+    const docMsg = document.querySelector("#doc-message");
+    const docBtn = document.querySelector("#create-doc");
+    const redirect = `${SITE_ROOT}/intro`;
+    docBtn.addEventListener("click", (e) => {
+        showMessage(docMsg, true, "Requesting permission to create a Google Doc... This may take a moment.")
+        fetch(`${API_ROOT}/api/notepad/authorize/${gameId}?redirect=${encodeURIComponent(redirect)}`).then((res) => {
+            if (res.success) {
+                showMessage(docMsg, true, res.message);
+                setTimeout(() => {
+                    window.location = res.url;
+                }, 1000);
+            } else {
+                showDriveError(docMsg);
+            }
+        }).catch((err) => {
+            showDriveError(docMsg);
+        });
+    });
+    if (window.location.href.indexOf("code=") > -1) {
+        const authCode = window.location.href.split("code=")[1].split("&")[0];
+        showMessage(docMsg, true, "Permission granted. Creating your shared notepad. This may take a moment."); 
+        fetch(`${API_ROOT}/api/notepad/create/${gameId}?code=${encodeURIComponent(authCode)}&redirect=${encodeURIComponent(redirect)}`).then((res) => {
+            if (res.success) {
+                showMessage(docMsg, true, res.message);
+                setTimeout(() => {
+                    window.location = redirect;
+                }, 1000);
+            } else {
+                showDriveError(docMsg);
+            }
+        }).catch((err) => {
+           showDriveError(docMsg);
+       });
+    }
 }
 
 function doDiscussion() {
@@ -982,6 +1036,21 @@ function updateGame() {
                     }
                 }
             });
+            // Shared Notepad
+            if (data.doc) {
+                const proTipEl = document.querySelector(".pro-tip");
+                const missingDocEl = document.querySelector("#missing-doc");
+                const createdDocEl = document.querySelector("#created-doc");
+                const openLink = document.querySelector("#open-doc");
+                openLink.target = "_blank";
+                openLink.rel = "noopener";
+                openLink.href = `https://docs.google.com/document/d/${data.doc}`;
+                if (!proTipEl.classList.contains("success")) {
+                    proTipEl.classList.add("success");
+                }
+                hideEl(missingDocEl);
+                showEl(createdDocEl);
+            }
         }
         // Discussion
         let finalSubmission = false;

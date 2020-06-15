@@ -38,6 +38,15 @@ p {
     text-align: center;
 }
 
+.link {
+    text-decoration: underline;
+}
+
+.link:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
 /* Layout */
 
 .header {
@@ -524,6 +533,12 @@ p {
 .pro-tip {
     border: 2px dashed blue;
     color: blue;
+    padding: 10px;
+}
+
+.pro-tip.success {
+    border: 2px dashed green;
+    color: green;
     padding: 10px;
 }
 
