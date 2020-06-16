@@ -6,7 +6,7 @@ layout: case
     <p>Extracts positioning data from CCTV footage to provide a trail of where shoppers moved during their session, including visits to restrooms and fitting rooms.</p>
     <p><strong>Note:</strong> For privacy, restrooms and fitting room movement is not shown.</p>
     <p>Select a shopper to view their movement data.</p>
-    {% assign replays = site.data.replays | sort: "start" | reverse %}
+    {% assign replays = site.data.replays.suspects | sort: "start" | reverse %}
     {% for replay in replays %}
         <div class="replay-toggle closed">
             <h2>
