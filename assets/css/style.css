@@ -108,6 +108,14 @@ p {
     padding: 20px;
 }
 
+.footer {
+    margin-bottom: 20px;
+}
+
+.footer, .footer a {
+    color: white !important;
+}
+
 .sidebar {
     width: 50px;
     padding: 20px;
