@@ -28,7 +28,7 @@ Scroll horizontally to see all ten metadata columns.
         <tr>
           <td>Shopper #1263</td>
           <td>4:30:27 PM</td>
-          <td>4:40:06 PM</td>
+          <td>4:47:36 PM</td>
           <td>$299.98</td>
           <td>$0.00</td>
           <td></td>
@@ -40,7 +40,7 @@ Scroll horizontally to see all ten metadata columns.
         <tr>
           <td>Shopper #6871</td>
           <td>4:47:15 PM</td>
-          <td>4:56:19 PM</td>
+          <td>5:00:03 PM</td>
           <td>$149.99</td>
           <td>$0.00</td>
           <td></td>
@@ -52,7 +52,7 @@ Scroll horizontally to see all ten metadata columns.
         <tr>
           <td>Shopper #6362</td>
           <td>4:55:38 PM</td>
-          <td>5:12:38 PM</td>
+          <td>5:24:10 PM</td>
           <td>$449.97</td>
           <td>$149.99</td>
           <td>CASH</td>
@@ -64,7 +64,7 @@ Scroll horizontally to see all ten metadata columns.
         <tr>
           <td>Shopper #1943</td>
           <td>4:59:03 PM</td>
-          <td>5:09:49 PM</td>
+          <td>5:18:49 PM</td>
           <td>$149.99</td>
           <td>$0.00</td>
           <td></td>
@@ -76,7 +76,7 @@ Scroll horizontally to see all ten metadata columns.
         <tr>
           <td>Shopper #2193</td>
           <td>4:59:10 PM</td>
-          <td>5:09:56 PM</td>
+          <td>5:18:56 PM</td>
           <td>$1,049.98</td>
           <td>$899.99</td>
           <td>DEBIT</td>
