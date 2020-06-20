@@ -110,3 +110,7 @@ _site/*
 # Server
 server/node_modules/
 server/.env
+
+# Working Files
+manage.js
+raw/*

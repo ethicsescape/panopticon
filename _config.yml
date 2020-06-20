@@ -19,4 +19,6 @@ exclude:
   - package.json
   - server.js
   - build.js
+  - manage.js
   - clues.json
+  - raw/*
