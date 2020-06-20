@@ -152,12 +152,44 @@ app.get("/api/lookup", (request, response) => {
 });
 
 app.get("/api/game/create", (request, response) => {
-    const ref = db.ref(`${ROOT}/games`).push({
-        exists: true,
-        hostname: request.hostname
-    });
-    const gameId = ref.key;
-    response.send({ success: true, gameId });
+    const gatewayRaw = request.query.gateway;
+    if (gatewayRaw) {
+        const gateway = gatewayRaw.toLowerCase();
+        db.ref(`${ROOT}/access/${gateway}`).once("value", (snap) => {
+            const accessData = snap.val() || false;
+            if (!accessData) {
+                response.send({ success: false, message: "Game access code not found." });
+            } else {
+                if (accessData.reusable) {
+                    const ref = db.ref(`${ROOT}/games`).push({
+                        exists: true,
+                        hostname: request.hostname,
+                        gateway: gateway
+                    });
+                    const gameId = ref.key;
+                    response.send({ success: true, gameId });
+                } else {
+                    if (accessData.game) {
+                        response.send({ success: true, gameId: accessData.game });
+                    } else {
+                        const ref = db.ref(`${ROOT}/games`).push({
+                            exists: true,
+                            hostname: request.hostname,
+                            gateway: gateway
+                        });
+                        const gameId = ref.key;
+                        db.ref(`${ROOT}/access/${gateway}/game`).set(gameId).then((done) => {
+                            response.send({ success: true, gameId });    
+                        }).catch((err) => {
+                            response.send({ success: false, message: "Failed to create game. Please try again.", err });
+                        });
+                    }
+                }
+            }
+        });
+    } else {
+        response.send({ success: false, message: "Please enter a game access code." });
+    }
 });
 
 app.get("/api/game/fetch/:gameid", (request, response) => {

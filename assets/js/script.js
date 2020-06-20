@@ -707,21 +707,32 @@ if (viewId === "home") {
     if (localStorage.hasOwnProperty(GAME_PROPERTY) || window.location.href.indexOf("?join=") > -1) {
         doJoin();
     } else {
+        const gatewayInput = document.querySelector("#gateway-input");
+        const gatewayMsg = document.querySelector("#gateway-message");
         const button = document.querySelector("#create-game .button");
-        button.addEventListener("click", (e) => {
-            fetch(`${API_ROOT}/api/game/create`).then((res) => {
+        const submitCreate = (e) => {
+            if (!gatewayInput.value) {
+                showMessage(gatewayMsg, false, "Please enter your game access code.");
+                return;
+            }
+            const gateway = encodeURIComponent(gatewayInput.value);
+            fetch(`${API_ROOT}/api/game/create?gateway=${gateway}`).then((res) => {
                 if (res.success) {
+                    showMessage(gatewayMsg, true, "Success. Creating game.");
                     setNewGameID(res.gameId);
                     window.location = `${SITE_ROOT}?join=${res.gameId}`;
-                    // doJoin(); 
                 } else {
-                    alert("Failed to create game. Contact vingkan@gmail.com for help.");
-                    console.error(res);
+                    showMessage(gatewayMsg, false, res.message || "Failed to create game.");
                 }
             }).catch((err) => {
-                alert("Failed to create game. Contact vingkan@gmail.com for help.");
-                console.error(err);
+                showMessage(gatewayMsg, false, "Failed to create game. Contact vingkan@gmail.com for help.");
             });
+        };
+        button.addEventListener("click", submitCreate);
+        gatewayInput.addEventListener("keypress", (e) => {
+            if (e.keyCode === 13) {
+                submitCreate();
+            }
         });
     }
 }
