@@ -243,6 +243,13 @@ ul ul {
     text-align: left;
 }
 
+/* FAQ */
+
+.video-player {
+    display: block;
+    margin: 0 auto;
+}
+
 /* Responsive */
 
 @media screen and (max-width: 800px) {
