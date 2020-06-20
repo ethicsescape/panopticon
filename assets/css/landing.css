@@ -1,0 +1,277 @@
+/* Text */
+
+html {
+    font-family: 'Inconsolata', monospace;
+
+    background: url("../img/store_interior.jpg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 20px;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+p {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+li {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.centered {
+    text-align: center;
+}
+
+.content {
+    max-width: 800px;
+    display: block;
+    margin: 20px auto;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* List */
+
+ol, ul {
+    margin: 20px 30px;
+}
+
+ul {
+    list-style: square;
+}
+
+ol {
+    list-style: decimal;
+}
+
+li {
+    margin: 5px 0;
+}
+
+ul ul {
+    margin: 0 30px;
+}
+
+.content ul ul {
+    margin: 0 30px;
+}
+
+.centered-list {
+    margin: 0 auto;
+    display: block;
+    width: 450px;
+}
+
+.content ol {
+    margin: 20px 50px;
+}
+
+.content ul {
+    margin: 20px 40px;
+}
+
+/* Button */
+
+.button-holder {
+    text-align: center;
+}
+
+.button {
+    border: 2px solid black;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    background: black;
+    color: white;
+    text-decoration: none;
+}
+
+.button:hover {
+    cursor: pointer;
+    background: blue;
+}
+
+.button.big {
+    font-weight: bold;
+    padding: 10px;
+    font-size: 20px;
+}
+
+/* Sections */
+
+.section {
+    padding: 40px 20px;
+}
+
+#splash {
+    padding: 60px 0;
+}
+
+#splash .button {
+    background: white;
+    color: black;
+    text-shadow: none;
+    margin: 20px;
+}
+
+#splash .button:hover {
+    background: blue;
+    color: white;
+}
+
+.title {
+    font-size: 50px;
+}
+
+.title img {
+    display: inline-block;
+    height: 50px;
+    vertical-align: middle;
+}
+
+.title span {
+    vertical-align: middle;
+    margin-left: -10px;
+}
+
+.section {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.section.standout {
+    background: rgba(0, 0, 0, 0.65);
+    text-shadow: 0 0 5px black;
+    color: white;
+}
+
+.footer a {
+    color: white;
+}
+
+.footer a:hover {
+    color: blue;
+    cursor: pointer;
+}
+
+/* Screenshots */
+
+.screenshot-holder {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.screenshot-holder p, .screenshot-holder img {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.screenshot-holder p {
+    text-align: left;
+    width: 200px;
+    margin: 20px;
+}
+
+.screenshot-holder img {
+    width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Nonprofits */
+
+.nonprofit-holder {
+    text-align: center;
+    padding: 20px;
+}
+
+.nonprofit-column {
+    display: inline-block;
+}
+
+.nonprofit-holder a {
+    display: block;
+    padding: 10px;
+    width: 265px;
+}
+
+.nonprofit-holder a:hover {
+    color: blue;
+    cursor: pointer;
+}
+/* Testimonials */
+
+.testimonial-holder {
+    text-align: center;
+}
+
+.testimonial-holder p {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+    width: 200px;
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+    text-shadow: none;
+    color: black;
+    text-align: left;
+}
+
+/* Responsive */
+
+@media screen and (max-width: 800px) {
+
+    .content {
+        max-width: 90%;
+    }
+
+    .screenshot-holder p {
+        width: 90%;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .screenshot-holder img {
+        width: 90%;
+    }
+
+}
+
+@media screen and (max-width: 500px) {
+
+    .centered-list {
+        width: auto !important;
+        margin: 20px 40px;
+    }
+
+    .testimonial-holder p {
+        width: 80%;
+    }
+
+}
