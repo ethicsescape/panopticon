@@ -248,14 +248,10 @@ if (viewId === "secure") {
                 messageEl.classList.remove("failure");
             }
             messageEl.classList.add("success");
-            if (!alreadyUnlocked) {
-                messageEl.innerText = `Access granted. Opening...`;
-                setTimeout(() => {
-                    openDocument();
-                }, 1000);
-            } else {
+            messageEl.innerText = `Access granted. Opening...`;
+            setTimeout(() => {
                 openDocument();
-            }
+            }, 1000);
         } else {
             messageEl.classList.add("failure");
             messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;
@@ -263,13 +259,13 @@ if (viewId === "secure") {
     };
     
     input.focus();
-    let alreadyUnlocked = false;
     if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
-        const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
+        const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`).toLowerCase();
         input.value = storedCode;
-        alreadyUnlocked = true;
-        showMessage(messageEl, true, "Clue already unlocked.");
-        openDocument();
+        if (storedCode === elephant) {
+            showMessage(messageEl, true, "Clue already unlocked.");
+            openDocument();   
+        }
     }
     let attempts = 0;
     button.addEventListener("click", accessDocument);
@@ -738,6 +734,20 @@ if (viewId === "discussion") {
     doDiscussion();
 }
 
+function getTimeDiffData(end, start) {
+    const ms = end - start;
+    const totalSecs = Math.floor(ms / 1000);
+    const mins = Math.floor((totalSecs / 60));
+    const secs = totalSecs % 60;
+    return { mins, secs };
+}
+
+function getTimeLabel(diff) {
+    const { mins, secs } = diff;
+    const label = `${mins} min${mins === 1 ? "" : "s"}, ${secs} sec${secs === 1 ? "" : "s"}`;
+    return label;
+}
+
 function showResults(discussionEl, data, finalSubmission, gameId, userId) {
     hideEl(discussionEl.querySelector("#discussion-entry"));
     hideEl(discussionEl.querySelector("#mission-box"));
@@ -748,17 +758,14 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
     const gameMissionMap = data.missions || {};
     if (finalSubmission && concEl.getAttribute("data-state") === "empty") {
         concEl.setAttribute("data-state", "filled");
-        const ms = finalSubmission.timestamp - data.started;
-        const totalSecs = Math.floor(ms / 1000);
-        const mins = Math.floor((totalSecs / 60));
-        const secs = totalSecs % 60;
         const resTimeEl = document.querySelector("#results-time");
         const resSusEl = document.querySelector("#results-suspect");
-        resTimeEl.innerText = `${mins} min${mins === 1 ? "" : "s"}, ${secs} sec${secs === 1 ? "" : "s"}`;
+        const timeDiff = getTimeDiffData(finalSubmission.timestamp, data.started);
+        resTimeEl.innerText = getTimeLabel(timeDiff);
         resSusEl.innerText = finalSubmission.suspect;
         document.querySelector("#results-rationale").innerText = finalSubmission.rationale;
         document.querySelector("#results-recommendations").innerText = finalSubmission.recommendations;
-        if (mins <= 59) {
+        if (timeDiff.mins <= 59) {
             resTimeEl.classList.add("success");
         } else {
             resTimeEl.classList.add("failure");
@@ -791,28 +798,50 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
         spanOff.innerText = `deactivated ${nOff} system${nOff === 1 ? "" : "s"}`;
         const resCluEl = document.querySelector("#results-clues");
         if (resCluEl.getAttribute("data-state") === "empty") {
-            const unlockedByMap = finalSubmission.unlockedby || {};
+            const unlockedMap = finalSubmission.unlocked || {};
             let clueCount = 0;
             resCluEl.setAttribute("data-state", "filled");
-            sidebarClues.forEach((clueId) => {
+            sidebarClues.map((clueId) => {
+                if (clueId in unlockedMap) {
+                    return { clueId, ...unlockedMap[clueId] };
+                }
+                return { clueId };
+            }).sort((a, b) => {
+                if (a.at && b.at) {
+                    return a.at - b.at;
+                } else if (a.at) {
+                    return -1;
+                } else if (b.at) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }).forEach((clueResult) => {
+                const clueId = clueResult.clueId
                 const clueResHtml = `
                     <div class="clue">
                         <i class="fa fa-key"></i>
                     </div>
                     <div class="clue-status">
-                        <strong>${clueId}</strong>
-                        <span></span>
+                        <strong>${clueId} </strong>
+                        <span data-span="by"></span>
+                        <span data-span="at"></span>
                     </div>
                 `;
                 const div = document.createElement("div");
                 div.classList.add("row-half");
                 div.innerHTML = clueResHtml;
-                const sc = div.querySelector("span");
+                const sc = div.querySelector("span[data-span=by]");
+                const su = div.querySelector("span[data-span=at]");
                 const ci = div.querySelector(".clue");
-                if (clueId in unlockedByMap) {
+                if (clueId in unlockedMap) {
                     clueCount++;
                     ci.classList.add("unlocked");
-                    sc.innerText = ` unlocked by ${nameMap[unlockedByMap[clueId]]}`;
+                    const unlockDiff = getTimeDiffData(clueResult.at, data.started);
+                    const unlockedBy = nameMap[clueResult.by];
+                    const unlockedAt = getTimeLabel(unlockDiff);
+                    sc.innerText = `unlocked by ${unlockedBy}`;
+                    su.innerText = `in ${unlockedAt}`;
                 } else {
                     sc.innerText = ` not unlocked`;
                 }
@@ -932,7 +961,7 @@ function updateGame() {
                 clueEl.appendChild(tagEl);
                 clueEl.classList.add("clue");
                 if (isUnlocked) {
-                    localStorage.setItem(`panopticon_clue_${clueId}`, unlockedMap[clueId]);
+                    localStorage.setItem(`panopticon_clue_${clueId}`, unlockedMap[clueId].code);
                     clueEl.classList.add("unlocked");
                     clueEl.addEventListener("click", (e) => {
                         window.location = `${SITE_ROOT}/secure/${clueId}`;

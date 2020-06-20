@@ -112,22 +112,22 @@ app.get("/api/unlock/:clueid", (request, response) => {
     const gameId = request.query.game;
     const userId = request.query.user;
     if (gameId && userId) {
-        db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`).set(code).then(() => {
-            const ref = db.ref(`${ROOT}/games/${gameId}/unlockedby/${clueId}`);
+            const ref = db.ref(`${ROOT}/games/${gameId}/unlocked/${clueId}`);
             ref.once("value", (snap) => {
                 if (snap.val()) {
                     response.send({ success: true });
                 } else {
-                    ref.set(userId).then(() => {
+                    ref.set({
+                        code: code,
+                        by: userId,
+                        at: firebase.database.ServerValue.TIMESTAMP
+                    }).then(() => {
                         response.send({ success: true });
                     }).catch((err) => {
                         response.send({ success: false, error: err });
                     });
                 }
             });
-        }).catch((err) => {
-            response.send({ success: false, error: err });
-        });
     } else {
         response.send({ success: false, message: "Missing gameId or userId." });
     }
@@ -154,6 +154,7 @@ app.get("/api/lookup", (request, response) => {
 app.get("/api/game/create", (request, response) => {
     const ref = db.ref(`${ROOT}/games`).push({
         exists: true,
+        hostname: request.hostname
     });
     const gameId = ref.key;
     response.send({ success: true, gameId });
@@ -325,7 +326,7 @@ app.get("/api/game/decide/:gameid", (request, response) => {
             rationale,
             recommendations,
             systems: data.systems || {},
-            unlockedby: data.unlockedby || {},
+            unlocked: data.unlocked || {},
             timestamp: firebase.database.ServerValue.TIMESTAMP,
         };
         db.ref(`${ROOT}/games/${gameId}/decisions`).push(decision).then(() => {

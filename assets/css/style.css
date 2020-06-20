@@ -619,6 +619,11 @@ span#mission-reminder.hidden {
 
 #results-clues .clue-status {
     display: inline-block;
+    vertical-align: middle;
+}
+
+#results-clues .clue-status span {
+    display: block;
 }
 
 #results-clues .clue {
@@ -626,7 +631,7 @@ span#mission-reminder.hidden {
     color: black;
     opacity: 0.5;
     display: inline-block;
-    margin: 5px 0;
+    margin: 10px 0;
 }
 
 #results-clues .clue.unlocked {
