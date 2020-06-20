@@ -223,19 +223,22 @@ if (viewId === "secure") {
     const input = document.querySelector("[data-view=secure] input");
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
-    input.focus();
-    let alreadyUnlocked = false;
-    if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
-        const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
-        input.value = storedCode;
-        alreadyUnlocked = true;
-        showMessage(messageEl, true, "Clue already unlocked.");
-    }
-    let attempts = 0;
+    const elephant = atob(document.querySelector("#elephant").innerText).toLowerCase();
+    const viper = decodeURI(atob(document.querySelector("#viper").innerText));
+
+    const openDocument = () => {
+        // Navigate automatically
+        window.location = viper;
+        // Fallback that should not be needed
+        const linkEl = document.createElement("a");
+        linkEl.href = viper;
+        linkEl.innerText = "Access granted. Click here.";
+        messageEl.innerText = "";
+        messageEl.appendChild(linkEl);
+    };
+
     const accessDocument = () => {
         const accessCode = input.value.toLowerCase();
-        const elephant = atob(document.querySelector("#elephant").innerText).toLowerCase();
-        const viper = decodeURI(atob(document.querySelector("#viper").innerText));
         const gameId = localStorage.getItem(GAME_PROPERTY);
         const userId = localStorage.getItem(USER_PROPERTY);
         attempts++;
@@ -246,38 +249,29 @@ if (viewId === "secure") {
             }
             messageEl.classList.add("success");
             if (!alreadyUnlocked) {
-                let countdown = 3;
-                messageEl.innerText = `Access granted. Opening in ${countdown}...`;
-                const interval = setInterval(() => {
-                    countdown--;
-                    messageEl.innerText = `Access granted. Opening in ${countdown}...`;
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        // Navigate automatically
-                        window.location = viper;
-                        // Fallback that should not be needed
-                        const linkEl = document.createElement("a");
-                        linkEl.href = viper;
-                        linkEl.innerText = "Access granted. Click here.";
-                        messageEl.innerText = "";
-                        messageEl.appendChild(linkEl);
-                    }
+                messageEl.innerText = `Access granted. Opening...`;
+                setTimeout(() => {
+                    openDocument();
                 }, 1000);
             } else {
-                // Navigate automatically
-                window.location = viper;
-                // Fallback that should not be needed
-                const linkEl = document.createElement("a");
-                linkEl.href = viper;
-                linkEl.innerText = "Access granted. Click here.";
-                messageEl.innerText = "";
-                messageEl.appendChild(linkEl);
+                openDocument();
             }
         } else {
             messageEl.classList.add("failure");
             messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;
         }
+    };
+    
+    input.focus();
+    let alreadyUnlocked = false;
+    if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
+        const storedCode = localStorage.getItem(`panopticon_clue_${clueId}`);
+        input.value = storedCode;
+        alreadyUnlocked = true;
+        showMessage(messageEl, true, "Clue already unlocked.");
+        openDocument();
     }
+    let attempts = 0;
     button.addEventListener("click", accessDocument);
     input.addEventListener("keypress", (e) => {
         if (e.keyCode === 13) {
