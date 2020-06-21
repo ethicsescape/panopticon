@@ -129,10 +129,14 @@ p {
     margin-bottom: 20px;
 }
 
+.sidebar .clues {
+    font-size: 0;
+}
+
 .clue {
-    border: 2px dashed white;
-    color: white;
-    opacity: 0.25;
+    font-size: 18px;
+    border: 2px dashed gray;
+    color: gray;
     width: 46px;
     height: 46px;
     line-height: 46px;
@@ -146,7 +150,6 @@ p {
 }
 
 .clue.unlocked {
-    opacity: 1.0;
     border: 2px dashed green;
     color: green;
     cursor: pointer;
@@ -159,30 +162,35 @@ p {
     color: white;
 }
 
-.clue.unlocked:hover span {
+.clue:hover span {
     position: relative;
     top: -46px;
     display: inline-block;
     text-align: center;
-    background: green;
-    color: white;
     margin-left: 60px;
     padding: 0 10px;
     z-index: 1;
+    background: gray;
+    color: white;
 }
 
-.sidebar .mission .clue {
+.clue.unlocked:hover span {
+    background: green;
+    color: white;
+}
+
+.sidebar .mission {
     border: 2px dashed purple;
     color: purple;
 }
 
-.sidebar .mission .clue:hover {
+.sidebar .mission:hover {
     border: 2px solid purple;
     background: purple;
     color: white;
 }
 
-.sidebar .mission .clue:hover span {
+.sidebar .mission:hover span {
     background: purple;
 }
 
@@ -195,15 +203,11 @@ p {
     .sidebar {
         width: auto;
     }
-    
-    .sidebar .mission, .sidebar .clues {
-        display: inline-block;
-    }
 
     .sidebar .clue {
         display: inline-block;
         position: relative;
-        margin: 0 5px;
+        margin: 5px;
     }
     
     .sidebar .timer {
@@ -260,6 +264,13 @@ p {
 
 .form input {
     letter-spacing: 2px;
+}
+
+.secure-input {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 210px;
 }
 
 .long-input {
@@ -338,6 +349,20 @@ p {
     min-width: 450px;
     max-width: 450px;
     min-height: 80px;
+}
+
+@media screen and (max-width: 500px) {
+
+    .decision-form {
+        width: auto !important;
+    }
+
+    .form select, .form textarea {
+        min-width: 100% !important;
+        width: 100%;
+        max-width: 100% !important;
+    }
+
 }
 
 /* Content */
@@ -513,6 +538,15 @@ p {
     margin: 10px;
 }
 
+@media screen and (max-width: 640px) {
+
+    .video-player {
+        width: 95%;
+        height: 300px;
+    }
+
+}
+
 .mission-row .mission-preview {
     display: inline-block;
 }
@@ -559,7 +593,7 @@ span#mission-reminder {
     margin-left: 60px;
     padding: 10px;
     line-height: 18px;
-    width: 120px;
+    width: 140px;
     text-align: left;
 }
 
@@ -577,6 +611,7 @@ span#mission-reminder.hidden {
     height: 100%;
     background: rgba(0, 0, 0, 0.75);
     cursor: pointer;
+    z-index: 2;
 }
 
 .cover .popup {
@@ -585,6 +620,7 @@ span#mission-reminder.hidden {
     width: 280px;
     margin: 50px auto;
     cursor: default;
+    z-index: 4;
 }
 
 .cover .popup p {
@@ -711,11 +747,7 @@ span#mission-reminder.hidden {
     font-weight: bold;
 }
 
-.box-letter.is-face {
-    background: rgb(0, 255, 0);
-}
-
-.box-letter.not-face {
-    border: 3px solid rgb(255, 0, 0);
-    opacity: 0.5;
+.box-label.is-face .button:nth-child(1), .box-label.not-face .button:nth-child(2) {
+    background: black;
+    color: white;
 }

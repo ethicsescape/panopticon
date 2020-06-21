@@ -450,17 +450,16 @@ if (tabId === "face-detection" && viewId === "case") {
         Array.from(box.querySelectorAll(".button")).forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 const label = btn.getAttribute("data-label");
-                const letter = box.querySelector(".box-letter");
-                if (letter.classList.contains("is-face")) {
-                    letter.classList.remove("is-face");
+                if (box.classList.contains("is-face")) {
+                    box.classList.remove("is-face");
                 }
-                if (letter.classList.contains("not-face")) {
-                    letter.classList.remove("not-face");
+                if (box.classList.contains("not-face")) {
+                    box.classList.remove("not-face");
                 }
-                letter.classList.add(label);
-                const accessCode = Array.from(document.querySelectorAll(".box-letter")).map((el) => {
+                box.classList.add(label);
+                const accessCode = Array.from(document.querySelectorAll(".box-label")).map((el) => {
                     if (el.classList.contains("is-face")) {
-                        return el.getAttribute("data-letter");
+                        return el.querySelector("[data-letter]").getAttribute("data-letter");
                     } else {
                         return "";
                     }
@@ -852,7 +851,7 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
                     const unlockedBy = nameMap[clueResult.by];
                     const unlockedAt = getTimeLabel(unlockDiff);
                     sc.innerText = `unlocked by ${unlockedBy}`;
-                    su.innerText = `in ${unlockedAt}`;
+                    su.innerText = `after ${unlockedAt}`;
                 } else {
                     sc.innerText = ` not unlocked`;
                 }
@@ -934,6 +933,30 @@ function updateGame() {
     const sidebar = document.querySelector(".sidebar");
     const timerEl = document.querySelector(".timer");
     const cluesEl = document.querySelector(".sidebar .clues");
+    // Set up clue sidebar
+    if (sidebar) {
+        sidebarClues.forEach((clueId) => {
+            let clueEl = document.createElement("div");
+            clueEl.setAttribute("data-clue", clueId);
+            let iconEl = document.createElement("i");
+            iconEl.classList.add("fa");
+            iconEl.classList.add("fa-key");
+            clueEl.appendChild(iconEl);
+            let tagEl = document.createElement("span");
+            tagEl.innerText = clueId;
+            clueEl.appendChild(tagEl);
+            clueEl.classList.add("clue");
+            if (localStorage.hasOwnProperty(`panopticon_clue_${clueId}`)) {
+                clueEl.setAttribute("data-state", "filled");
+                clueEl.classList.add("unlocked");
+                clueEl.addEventListener("click", (e) => {
+                    window.location = `${SITE_ROOT}/secure/${clueId}`;
+                });
+            }
+            cluesEl.appendChild(clueEl);
+        });
+    }
+    // Listen for updates
     db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
         const data = snap.val() || {};
         const unlockedMap = data.unlocked || {};
@@ -955,30 +978,24 @@ function updateGame() {
                     timerEl.innerText = `${sign}${leftpad(minsLeft)}:${leftpad(secsLeft)}`;
                 }
             };
-            updateTimer();
-            setInterval(() => {
+            if (timerEl.getAttribute("data-state") !== "filled") {
+                timerEl.setAttribute("data-state", "filled");
                 updateTimer();
-            }, 1000);
-            cluesEl.innerHTML = "";
+                setInterval(() => {
+                    updateTimer();
+                }, 1000);   
+            }
             sidebarClues.forEach((clueId) => {
                 const isUnlocked = clueId in unlockedMap;
-                let clueEl = document.createElement("div");
-                let iconEl = document.createElement("i");
-                iconEl.classList.add("fa");
-                iconEl.classList.add("fa-key");
-                clueEl.appendChild(iconEl);
-                let tagEl = document.createElement("span");
-                tagEl.innerText = clueId;
-                clueEl.appendChild(tagEl);
-                clueEl.classList.add("clue");
-                if (isUnlocked) {
+                const clueEl = document.querySelector(`[data-clue=${clueId}]`);
+                if (isUnlocked && clueEl.getAttribute("data-state") !== "filled") {
                     localStorage.setItem(`panopticon_clue_${clueId}`, unlockedMap[clueId].code);
+                    clueEl.setAttribute("data-state", "filled");
                     clueEl.classList.add("unlocked");
                     clueEl.addEventListener("click", (e) => {
                         window.location = `${SITE_ROOT}/secure/${clueId}`;
                     });
                 }
-                cluesEl.append(clueEl);
             });
         }
         const hasPreReqs = "risk" in unlockedMap && "movement" in unlockedMap && "attention" in unlockedMap;

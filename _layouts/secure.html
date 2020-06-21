@@ -28,13 +28,13 @@
         <div class="app">
             <div class="sidebar">
                 <div class="timer"></div>
-                <div class="mission hidden">
-                    <div class="clue unlocked">
+                <div class="clues">
+                    <div class="clue unlocked mission hidden">
                         <i class="fa"></i>
+                        <span id="mission-reminder" class="hidden">Before you do anything else, check out your secret mission!</span>
                         <span>mission</span>
                     </div>
                 </div>
-                <div class="clues"></div>
             </div>
             <div class="page">
                 <div class="content secure-form" data-view="secure">
@@ -44,7 +44,7 @@
                     {% endif %}
                     <p>This content is under a protected access policy. Please enter the access code to retrieve it.</p>
                     <div class="form">
-                        <input type="text" placeholder="access code" />
+                        <input type="text" class="secure-input" placeholder="access code" />
                         <button>Submit</button>
                     </div>
                     <p class="message"></p>
