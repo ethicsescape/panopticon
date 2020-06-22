@@ -272,6 +272,10 @@ ul ul {
 
 @media screen and (max-width: 500px) {
 
+    .content {
+        max-width: 100%;
+    }
+
     .centered-list {
         width: auto !important;
         margin: 20px 40px;
@@ -279,6 +283,11 @@ ul ul {
 
     .testimonial-holder p {
         width: 80%;
+    }
+
+    .video-player {
+        width: 95%;
+        height: 300px;
     }
 
 }
