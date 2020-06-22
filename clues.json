@@ -2,37 +2,44 @@
     "risk": {
         "password": "krichev",
         "document": "../document/rankings",
-        "preview": "Risk Layer"
+        "preview": "Risk Layer",
+        "hint": "Look for the sticky note on the case tab."
     },
     "movement": {
         "password": "joybuolamwini",
         "document": "../case/movement",
-        "preview": "Movement Layer"
+        "preview": "Movement Layer",
+        "hint": "Read the \"Security Observations\" email to get the password for the \"Movement Layer Training\" email. Complete the training by picking the human faces. The back of a human head counts as a face. The password is the name of a researcher who wrote the \"Gender Shades\" study."
     },
     "attention": {
         "password": "lyon",
         "document": "../document/eye-tracking",
-        "preview": "Attention Layer"
+        "preview": "Attention Layer",
+        "hint": "Look for the policy review in the files tab. The circled letters form the password. Reading the comments on the form is also helpful!"
     },
     "training": {
         "password": "dmw0723",
         "document": "../document/email-training",
-        "preview": "Movement Layer Training"
+        "preview": "Movement Layer Training",
+        "hint": "Read the \"Security Observations\" email to get the password for the \"Movement Layer Training\" email."
     },
     "offer": {
         "password": "fanon",
         "document": "../document/offer-watchful-eye",
-        "preview": "Vendor Offer about Attention Data"
+        "preview": "Vendor Offer about Attention Data",
+        "hint": "All five examples use digital technology. Monitoring behavior refers to monitoring human behavior. All of the examples that include the word \"sell\" are selling predictions. Exactly two of the examples represent all three aspects of surveillance capitalism. The password is the name of a psychiatrist, philosopher, and freedom fighter who coined the term \"epidermalization of inferiority.\""
     },
     "removal": {
         "password": "speed",
         "document": "../document/remove-my-data",
-        "preview": "Security Email for Removal Request"
+        "preview": "Security Email for Removal Request",
+        "hint": "This clue will appear after you unlock all three layers in the data tab. You will need the sticky note, the movement layer training email, and the policy review file."
     },
     "lookup": {
         "password": "fishing",
         "document": "../case/lookup",
-        "preview": "Reverse Email Lookup Tool"
+        "preview": "Reverse Email Lookup Tool",
+        "hint": "Check out the floor plan under the files tab. Read the note to self and use the floor plan to find the password. You can also find a helpful email in the reseller screenshot file by looking on the right side of the screenshot under seller information."
     },
     "resolution": {
         "password": "vick",

@@ -194,6 +194,21 @@ p {
     background: purple;
 }
 
+.sidebar .hints {
+    border: 2px dashed blue;
+    color: blue;
+}
+
+.sidebar .hints:hover {
+    border: 2px solid blue;
+    background: blue;
+    color: white;
+}
+
+.sidebar .hints:hover span {
+    background: blue;
+}
+
 @media screen and (max-width: 930px) {
     
     .sidebar, .page {
@@ -750,4 +765,11 @@ span#mission-reminder.hidden {
 .box-label.is-face .button:nth-child(1), .box-label.not-face .button:nth-child(2) {
     background: black;
     color: white;
+}
+
+/* Hints */
+
+.hint-text {
+    border: 2px dashed blue;
+    padding: 20px;
 }

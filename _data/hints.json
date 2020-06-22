@@ -1,0 +1,37 @@
+[
+  {
+    "id": "risk",
+    "hint": "TG9vayBmb3IgdGhlIHN0aWNreSBub3RlIG9uIHRoZSBjYXNlIHRhYi4=",
+    "preview": "Risk Layer"
+  },
+  {
+    "id": "movement",
+    "hint": "UmVhZCB0aGUgIlNlY3VyaXR5IE9ic2VydmF0aW9ucyIgZW1haWwgdG8gZ2V0IHRoZSBwYXNzd29yZCBmb3IgdGhlICJNb3ZlbWVudCBMYXllciBUcmFpbmluZyIgZW1haWwuIENvbXBsZXRlIHRoZSB0cmFpbmluZyBieSBwaWNraW5nIHRoZSBodW1hbiBmYWNlcy4gVGhlIGJhY2sgb2YgYSBodW1hbiBoZWFkIGNvdW50cyBhcyBhIGZhY2UuIFRoZSBwYXNzd29yZCBpcyB0aGUgbmFtZSBvZiBhIHJlc2VhcmNoZXIgd2hvIHdyb3RlIHRoZSAiR2VuZGVyIFNoYWRlcyIgc3R1ZHku",
+    "preview": "Movement Layer"
+  },
+  {
+    "id": "attention",
+    "hint": "TG9vayBmb3IgdGhlIHBvbGljeSByZXZpZXcgaW4gdGhlIGZpbGVzIHRhYi4gVGhlIGNpcmNsZWQgbGV0dGVycyBmb3JtIHRoZSBwYXNzd29yZC4gUmVhZGluZyB0aGUgY29tbWVudHMgb24gdGhlIGZvcm0gaXMgYWxzbyBoZWxwZnVsIQ==",
+    "preview": "Attention Layer"
+  },
+  {
+    "id": "training",
+    "hint": "UmVhZCB0aGUgIlNlY3VyaXR5IE9ic2VydmF0aW9ucyIgZW1haWwgdG8gZ2V0IHRoZSBwYXNzd29yZCBmb3IgdGhlICJNb3ZlbWVudCBMYXllciBUcmFpbmluZyIgZW1haWwu",
+    "preview": "Movement Layer Training"
+  },
+  {
+    "id": "offer",
+    "hint": "QWxsIGZpdmUgZXhhbXBsZXMgdXNlIGRpZ2l0YWwgdGVjaG5vbG9neS4gTW9uaXRvcmluZyBiZWhhdmlvciByZWZlcnMgdG8gbW9uaXRvcmluZyBodW1hbiBiZWhhdmlvci4gQWxsIG9mIHRoZSBleGFtcGxlcyB0aGF0IGluY2x1ZGUgdGhlIHdvcmQgInNlbGwiIGFyZSBzZWxsaW5nIHByZWRpY3Rpb25zLiBFeGFjdGx5IHR3byBvZiB0aGUgZXhhbXBsZXMgcmVwcmVzZW50IGFsbCB0aHJlZSBhc3BlY3RzIG9mIHN1cnZlaWxsYW5jZSBjYXBpdGFsaXNtLiBUaGUgcGFzc3dvcmQgaXMgdGhlIG5hbWUgb2YgYSBwc3ljaGlhdHJpc3QsIHBoaWxvc29waGVyLCBhbmQgZnJlZWRvbSBmaWdodGVyIHdobyBjb2luZWQgdGhlIHRlcm0gImVwaWRlcm1hbGl6YXRpb24gb2YgaW5mZXJpb3JpdHkuIg==",
+    "preview": "Vendor Offer about Attention Data"
+  },
+  {
+    "id": "removal",
+    "hint": "VGhpcyBjbHVlIHdpbGwgYXBwZWFyIGFmdGVyIHlvdSB1bmxvY2sgYWxsIHRocmVlIGxheWVycyBpbiB0aGUgZGF0YSB0YWIuIFlvdSB3aWxsIG5lZWQgdGhlIHN0aWNreSBub3RlLCB0aGUgbW92ZW1lbnQgbGF5ZXIgdHJhaW5pbmcgZW1haWwsIGFuZCB0aGUgcG9saWN5IHJldmlldyBmaWxlLg==",
+    "preview": "Security Email for Removal Request"
+  },
+  {
+    "id": "lookup",
+    "hint": "Q2hlY2sgb3V0IHRoZSBmbG9vciBwbGFuIHVuZGVyIHRoZSBmaWxlcyB0YWIuIFJlYWQgdGhlIG5vdGUgdG8gc2VsZiBhbmQgdXNlIHRoZSBmbG9vciBwbGFuIHRvIGZpbmQgdGhlIHBhc3N3b3JkLiBZb3UgY2FuIGFsc28gZmluZCBhIGhlbHBmdWwgZW1haWwgaW4gdGhlIHJlc2VsbGVyIHNjcmVlbnNob3QgZmlsZSBieSBsb29raW5nIG9uIHRoZSByaWdodCBzaWRlIG9mIHRoZSBzY3JlZW5zaG90IHVuZGVyIHNlbGxlciBpbmZvcm1hdGlvbi4=",
+    "preview": "Reverse Email Lookup Tool"
+  }
+]

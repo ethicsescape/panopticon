@@ -1,7 +1,6 @@
 ---
 layout: case
 ---
-
 <div class="content" data-view="detection">
     <h1>Face Detection Training Data</h1>
     <p>The cutting-edge Panopticon Security Movement Layer monitors how people move through your buildings. To generate this tracking data, we ingest CCTV footage in real-time, detect faces in each frame, link faces of the same people across the footage, and transform the 2D image into a 3D map of your space.</p>

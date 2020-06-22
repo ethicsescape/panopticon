@@ -382,6 +382,32 @@ app.get("/api/game/toggle/:gameid", (request, response) => {
     });
 });
 
+const MAX_HINTS = 3;
+
+app.get("/api/hint/:gameid", (request, response) => {
+    const gameId = request.params.gameid;
+    const clueId = request.query.clue;
+    if (gameId && clueId) {
+        db.ref(`${ROOT}/games/${gameId}/hints`).once("value", (snap) => {
+            const hints = snap.val() || {};
+            const hintsUsed = Object.keys(hints).length;
+            if (clueId in hints) {
+                response.send({ success: false, message: "Your team has already used this hint." });
+            } else if (hintsUsed < MAX_HINTS) {
+                db.ref(`${ROOT}/games/${gameId}/hints/${clueId}`).set(true).then(() => {
+                    response.send({ success: true, message: `Used hint #${hintsUsed + 1} for ${clueId}.` });
+                }).catch((err) => {
+                    response.send({ success: false, message: "Something went wrong. Please reload and try again.", err: err });
+                });
+            } else {
+                response.send({ success: false, message: "Your team has already used up all of your hints." });
+            }
+        });
+    } else {
+        response.send({ success: false, message: "Missing gameId or clueId." });
+    }
+});
+
 app.get("/api/discussion/start/:gameid", (request, response) => {
     const gameId = request.params.gameid;
     if (gameId) {

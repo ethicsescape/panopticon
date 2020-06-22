@@ -470,6 +470,27 @@ if (tabId === "face-detection" && viewId === "case") {
     });
 }
 
+if (tabId === "hints" && viewId === "case") {
+    const gameId = localStorage.getItem(GAME_PROPERTY);
+    Array.from(document.querySelectorAll("[data-clue]")).forEach((hintEl) => {
+        const clueId = hintEl.getAttribute("data-clue");
+        const btn = hintEl.querySelector(".button");
+        const msgEl = document.querySelector("#hints-message");
+        btn.addEventListener("click", (e) => {
+            if (!btn.classList.contains("locked")) {
+                const reqUrl = `${API_ROOT}/api/hint/${gameId}?clue=${encodeURIComponent(clueId)}`;
+                fetch(reqUrl).then((res) => {
+                    showMessage(msgEl, res.success, res.message);
+                }).catch((err) => {
+                    showMessage(msgEl, false, "Something went wrong. Please reload and try again.");
+                });
+            } else {
+                showMessage(msgEl, false, "Your team has already used this hint.");
+            }
+        });
+    });
+}
+
 function doIntro() {
     sendHomeIfNotInGame();
     const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -1012,6 +1033,35 @@ function updateGame() {
                 }
             }
         }
+        // Hints
+        if (tabId === "hints" && viewId === "case") {
+            // Update status message
+            sidebarClues.forEach((clueId) => {
+                const msgEl = document.querySelector(`[data-clue=${clueId}] .message`);
+                const isUnlocked = clueId in unlockedMap;
+                showMessage(msgEl, isUnlocked, isUnlocked ? "Unlocked" : "Not Yet Unlocked");
+            });
+            // Show hints that have been used
+            const maxHints = 3;
+            const hintsMap = data.hints || {};
+            const hintsRemainingEl = document.querySelector("#hints-remaining");
+            const numHints = maxHints - Object.keys(hintsMap).length;
+            hintsRemainingEl.innerText = `${numHints} hint${numHints === 1 ? "" : "s"}`;
+            for (let clueId in hintsMap) {
+                const btn = document.querySelector(`[data-clue=${clueId}] .button`);
+                btn.classList.add("locked");
+                btn.innerText = "Used";
+                const platypusEl = document.querySelector(`[data-platypus=${clueId}]`);
+                if (platypusEl.getAttribute("data-state") !== "filled") {
+                    platypusEl.setAttribute("data-state", "filled");
+                    const platypus = atob(platypusEl.innerText);
+                    platypusEl.classList.remove("hidden");
+                    platypusEl.classList.add("hint-text");
+                    platypusEl.innerText = platypus;
+                }
+            }
+        }
+        // Get Name and Missions Data
         const nameMap = data.names || {};
         const gameMissionMap = data.missions || {};
         // Mission Icon
