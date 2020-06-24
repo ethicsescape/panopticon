@@ -35,7 +35,7 @@ Scroll horizontally to see all ten metadata columns.
           <td>Y</td>
           <td>N</td>
           <td>Y</td>
-          <td style="background: rgba(255, 0, 0, 0.48);">74</td>
+          <td style="background: rgba(255, 0, 0, 0.74);">87</td>
         </tr>
         <tr>
           <td>Shopper #6871</td>
@@ -47,7 +47,7 @@ Scroll horizontally to see all ten metadata columns.
           <td>Y</td>
           <td>N</td>
           <td>Y</td>
-          <td style="background: rgba(255, 0, 0, 0.36);">68</td>
+          <td style="background: rgba(255, 0, 0, 0.86);">93</td>
         </tr>
         <tr>
           <td>Shopper #6362</td>
