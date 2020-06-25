@@ -72,16 +72,8 @@ function getViewId(offset = 0) {
     return "home";
 }
 
-function tryPassword(entered, expected, ms) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (entered.toLowerCase() === expected.toLowerCase()) {
-                resolve({ success: true, message: `Access granted.` });
-            } else {
-                resolve({ success: false, message: `Wrong password.` });
-            }
-        }, ms);
-    });
+function cleanPassword(raw) {
+    return raw.toLowerCase().trim();
 }
 
 function invertMap(map) {
@@ -146,7 +138,7 @@ const MISSIONS = [
     {
         id: "power",
         name: "Power",
-        goal: "Persuade another player to shut down the surveillance system, but you cannot be the one to shut it down.",
+        goal: "After unlocking the offer email and opening the activation link, persuade another player to deactivate the surveillance system, but you cannot be the one to press the buttons.",
         suggest: "A good mission for someone daring.",
         icon: "plug",
         recap: "convince someone to shut down the system"
@@ -186,14 +178,26 @@ const sidebarClues = [
     "lookup",
 ];
 
+
+function clearLocalGameData() {
+    localStorage.removeItem(VIEWED_MISSION_PROPERTY);
+    sidebarClues.forEach((clueId) => {
+        localStorage.removeItem(`panopticon_clue_${clueId}`);
+    });
+    Object.keys(localStorage).forEach((key) => {
+        const isFace = key.indexOf("panopticon_face_") === 0;
+        const isDecision = key.indexOf("panopticon_decision_") === 0;
+        if (isFace || isDecision) {
+            localStorage.removeItem(key);
+        }
+    });
+}
+
 function setNewGameID(newGameId) {
     if (localStorage.hasOwnProperty(GAME_PROPERTY)) {
         const oldGameId = localStorage.getItem(GAME_PROPERTY);
         if (oldGameId !== newGameId) {
-            localStorage.removeItem(VIEWED_MISSION_PROPERTY);
-            sidebarClues.forEach((clueId) => {
-                localStorage.removeItem(`panopticon_clue_${clueId}`);
-            });
+            clearLocalGameData();
             localStorage.setItem(GAME_PROPERTY, newGameId);
         }
     } else {
@@ -223,7 +227,7 @@ if (viewId === "secure") {
     const input = document.querySelector("[data-view=secure] input");
     const button = document.querySelector("[data-view=secure] button");
     const messageEl = document.querySelector("[data-view=secure] .message");
-    const elephant = atob(document.querySelector("#elephant").innerText).toLowerCase();
+    const elephant = cleanPassword(atob(document.querySelector("#elephant").innerText));
     const viper = decodeURI(atob(document.querySelector("#viper").innerText));
 
     const openDocument = () => {
@@ -238,7 +242,7 @@ if (viewId === "secure") {
     };
 
     const accessDocument = () => {
-        const accessCode = input.value.toLowerCase();
+        const accessCode = cleanPassword(input.value);
         const gameId = localStorage.getItem(GAME_PROPERTY);
         const userId = localStorage.getItem(USER_PROPERTY);
         attempts++;
@@ -363,6 +367,30 @@ if (tabId === "decision") {
     const secretFormEl = document.querySelector("#secret-form");
     const button = document.querySelector("[data-view=decision] button");
     const messageEl = document.querySelector("[data-view=decision] .message");
+    // Persist suspect
+    if (localStorage.hasOwnProperty("panopticon_decision_suspect")) {
+        select.value = localStorage.getItem("panopticon_decision_suspect");
+    }
+    select.addEventListener("change", (e) => {
+        localStorage.setItem("panopticon_decision_suspect", select.value);
+    });
+    // Persist rationale
+    if (localStorage.hasOwnProperty("panopticon_decision_rationale")) {
+        textareaRat.value = localStorage.getItem("panopticon_decision_rationale");
+    }
+    textareaRat.addEventListener("change", (e) => {
+        localStorage.setItem("panopticon_decision_rationale", textareaRat.value);
+    });
+    // Persist recommendations
+    if (localStorage.hasOwnProperty("panopticon_decision_recommendations")) {
+        textareaRec.value = localStorage.getItem("panopticon_decision_recommendations");
+        if (secretFormEl.classList.contains("hidden")) {
+            secretFormEl.classList.remove("hidden");
+        }
+    }
+    textareaRec.addEventListener("change", (e) => {
+        localStorage.setItem("panopticon_decision_recommendations", textareaRec.value);
+    });
     const processDecision = () => {
         messageEl.innerText = "";
         const suspect = select.value;
@@ -377,7 +405,7 @@ if (tabId === "decision") {
         }
         if (secretFormEl.classList.contains("hidden")) {
             secretFormEl.classList.remove("hidden");
-            return
+            return;
         }
         const recommendations = textareaRec.value;
         if (recommendations.split(" ").length < 5) {
@@ -447,6 +475,11 @@ if (tabId === "lookup" && viewId === "case") {
 if (tabId === "face-detection" && viewId === "case") {
     const codeSpan = document.querySelector("#training-code");
     Array.from(document.querySelectorAll(".box-label")).forEach((box) => {
+        const boxId = box.getAttribute("data-box");
+        if (localStorage.hasOwnProperty(`panopticon_face_${boxId}`)) {
+            const label = localStorage.getItem(`panopticon_face_${boxId}`);
+            box.classList.add(label);
+        }
         Array.from(box.querySelectorAll(".button")).forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 const label = btn.getAttribute("data-label");
@@ -457,6 +490,7 @@ if (tabId === "face-detection" && viewId === "case") {
                     box.classList.remove("not-face");
                 }
                 box.classList.add(label);
+                localStorage.setItem(`panopticon_face_${boxId}`, label);
                 const accessCode = Array.from(document.querySelectorAll(".box-label")).map((el) => {
                     if (el.classList.contains("is-face")) {
                         return el.querySelector("[data-letter]").getAttribute("data-letter");
@@ -707,10 +741,7 @@ function doJoin() {
             if (res.success) {
                 localStorage.removeItem(GAME_PROPERTY);
                 localStorage.removeItem(USER_PROPERTY);
-                localStorage.removeItem(VIEWED_MISSION_PROPERTY);
-                sidebarClues.forEach((clueId) => {
-                    localStorage.removeItem(`panopticon_clue_${clueId}`);
-                });
+                clearLocalGameData();
                 window.location = SITE_ROOT;
             } else {
                 alert("Failed to leave game. Contact vingkan@gmail.com for help.");

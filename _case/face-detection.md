@@ -13,7 +13,7 @@ layout: case
     </p>
     <p class="centered">Label the {{ scene.boxes | size }} box(es) detected in this scene.</p>
     {% for box in scene.boxes %}
-    <div class="box-label">
+    <div class="box-label" data-box="{{ scene.id }}_{{ box.letter }}">
         <div class="box-letter" data-letter="{{ box.letter }}">
             <p>Box {{ box.letter }}</p>
         </div>
