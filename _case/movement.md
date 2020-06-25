@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Movement Layer
 ---
 <div class="content" data-view="movement">
     <h1 class="uppercase">Movement Layer</h1>

@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Removal Email
 ---
 # Subject: Removal Request
 

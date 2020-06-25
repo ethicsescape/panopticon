@@ -1,5 +1,6 @@
 ---
 layout: case
+title: FAQ
 ---
 # Frequently Asked Questions
 

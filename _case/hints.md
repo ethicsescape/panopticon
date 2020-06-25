@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Hints
 ---
 <div class="content" data-view="hints">
     <h1>Hints</h1>

@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Risk Layer
 ---
 
 # Risk Layer

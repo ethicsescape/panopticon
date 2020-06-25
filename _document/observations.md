@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Observations
 ---
 # Subject: Security Observations
 

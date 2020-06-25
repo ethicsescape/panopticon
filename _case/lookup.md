@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Email Lookup
 ---
 <div class="content" data-view="lookup">
     <h1 class="uppercase">Reverse Email Lookup</h1>

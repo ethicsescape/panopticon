@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Screenshot
 ---
 # Reseller Screenshot
 

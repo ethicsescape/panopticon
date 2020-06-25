@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Case
 ---
 <div class="content" data-view="case">
     <h1 class="uppercase">Case</h1>

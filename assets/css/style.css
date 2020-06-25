@@ -98,7 +98,7 @@ p {
 }
 
 .page {
-    padding: 20px;
+    padding: 20px 10px;
     max-width: 780px;
     text-align: left;
 }
@@ -118,7 +118,7 @@ p {
 
 .sidebar {
     width: 50px;
-    padding: 20px;
+    padding: 20px 10px;
 }
 
 .sidebar .timer {
@@ -772,4 +772,37 @@ span#mission-reminder.hidden {
 .hint-text {
     border: 2px dashed blue;
     padding: 20px;
+}
+
+/* Tracker */
+
+.tracker {
+    background: white;
+    width: 120px;
+    display: inline-block;
+    position: relative;
+    margin: 20px auto;
+    padding: 20px 10px;
+    text-align: left;
+}
+
+.tracker strong {
+    font-weight:  bold;
+}
+
+.tracker .name {
+    font-weight: bold;
+}
+
+.tracker .player-tracker.same-page {
+    background: rgba(0, 255, 0, 0.5);
+    padding: 5px;
+}
+
+@media screen and (max-width: 1050px) {
+
+    .tracker {
+        display: none;
+    }
+
 }

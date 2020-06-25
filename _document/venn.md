@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Venn Diagram
 ---
 # Venn Diagram
 

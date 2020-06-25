@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Training Email
 ---
 
 # Movement Layer Training

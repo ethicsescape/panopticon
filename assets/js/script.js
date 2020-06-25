@@ -72,6 +72,14 @@ function getViewId(offset = 0) {
     return "home";
 }
 
+function getCurrentPage() {
+    const siteRoot = getSiteRoot();
+    const fullLink = window.location.href;
+    const link = `..${fullLink.split(siteRoot)[1]}`;
+    const title = document.title;
+    return { title, link };
+}
+
 function cleanPassword(raw) {
     return raw.toLowerCase().trim();
 }
@@ -205,8 +213,20 @@ function setNewGameID(newGameId) {
     }
 }
 
+function updateCurrentPage() {
+    const gameId = localStorage.getItem(GAME_PROPERTY);
+    const userId = localStorage.getItem(USER_PROPERTY);
+    if (!gameId || !userId) {
+        return;
+    }
+    const { title, link } = getCurrentPage();
+    const reqUrl = `${API_ROOT}/api/current?game=${encodeURIComponent(gameId)}&user=${encodeURIComponent(userId)}&title=${encodeURIComponent(title)}&link=${encodeURIComponent(link)}`;
+    fetch(reqUrl);
+}
+
 // Wake up game server
 fetch(API_ROOT);
+updateCurrentPage();
 
 const viewId = getViewId();
 const tabId = getViewId(offset=1);
@@ -989,6 +1009,7 @@ function updateGame() {
     const sidebar = document.querySelector(".sidebar");
     const timerEl = document.querySelector(".timer");
     const cluesEl = document.querySelector(".sidebar .clues");
+    const yourPage = getCurrentPage();
     // Set up clue sidebar
     if (sidebar) {
         sidebarClues.forEach((clueId) => {
@@ -1099,6 +1120,40 @@ function updateGame() {
         // Get Name and Missions Data
         const nameMap = data.names || {};
         const gameMissionMap = data.missions || {};
+        // Team Tracker
+        const trackerEl = document.querySelector("#team-tracker");
+        if (trackerEl) {
+            for (let teammateId in data.current) {
+                if (!document.querySelector(`[data-teammate=${teammateId}]`)) {
+                    const div = document.createElement("div");
+                    const p = document.createElement("p");
+                    const pa = document.createElement("p");
+                    const a = document.createElement("a");
+                    div.setAttribute("data-teammate", teammateId);
+                    div.classList.add("player-tracker");
+                    p.classList.add("name");
+                    pa.classList.add("link")
+                    pa.appendChild(a);
+                    div.appendChild(p);
+                    div.appendChild(pa);
+                    trackerEl.appendChild(div);
+                }
+                const mateEl = document.querySelector(`[data-teammate=${teammateId}]`);
+                const theirPage = data.current[teammateId];
+                mateEl.querySelector("p").innerText = nameMap[teammateId];
+                mateEl.querySelector("a").innerText = theirPage.title;
+                mateEl.querySelector("a").href = theirPage.link;
+                if (theirPage.link === yourPage.link) {
+                    if (!mateEl.classList.contains("same-page")) {
+                        mateEl.classList.add("same-page");
+                    }
+                } else {
+                    if (mateEl.classList.contains("same-page")) {
+                        mateEl.classList.remove("same-page");
+                    }
+                }
+            }
+        }
         // Mission Icon
         const coverEl = document.querySelector(".cover");
         const missionIconEl = document.querySelector(".mission");

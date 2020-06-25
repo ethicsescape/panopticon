@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Floor Plan
 ---
 # Floor Plan
 

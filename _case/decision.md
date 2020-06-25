@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Decision
 ---
 <div class="content decision-form" data-view="decision">
     <h1 class="uppercase">Decision</h1>

@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Activation
 ---
 <div class="content" data-view="activate">
     <h1 class="uppercase">Dashboard</h1>

@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Briefing
 ---
 # Situation Briefing
 

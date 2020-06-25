@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Offer Email
 ---
 # FWD: Attention: The Attention Layer is Here! (Offer Enclosed)
 

@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Email
 ---
 <div class="content" data-view="email">
     <h1 class="uppercase">Email</h1>

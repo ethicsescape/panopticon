@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Virtual escape room about surveillance technology.">
         <meta property="og:image" content="https://ethicsescape.github.io/panopticon/assets/img/screenshot_clues.png">
-        <title>Panopticon</title>
+        <title>{{ page.title }}</title>
         <link id="favicon" rel="icon" href="https://ethicsescape.github.io/panopticon/assets/img/logo-white.png" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -60,6 +60,10 @@
                 {% else %}
                 {{ content }}
                 {% endif %}
+            </div>
+            <div class="tracker">
+                <h2>TEAM</h2>
+                <div id="team-tracker"></div>
             </div>
             <div class="cover hidden">
                 <div class="popup" data-state="empty">

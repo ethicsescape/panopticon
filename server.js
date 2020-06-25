@@ -106,6 +106,23 @@ app.get("/", (request, response) => {
     response.send({ success: true, message: "You have reached a Panopticon game server." });
 });
 
+app.get("/api/current", (request, response) => {
+    const gameId = request.query.game;
+    const userId = request.query.user;
+    const title = request.query.title;
+    const link = request.query.link;
+    if (gameId && userId && title && link) {
+            const ref = db.ref(`${ROOT}/games/${gameId}/current/${userId}`);
+            ref.set({ title, link }).then(() => {
+                response.send({ success: true });
+            }).catch((err) => {
+                response.send({ success: false, message: "Failed to update your current page.", err });
+            });
+    } else {
+        response.send({ success: false, message: "Missing gameId, userId, title, or link." });
+    }
+});
+
 app.get("/api/unlock/:clueid", (request, response) => {
     const clueId = request.params.clueid;
     const code = request.query.code.toLowerCase();

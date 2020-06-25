@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Resolution
 ---
 # Case Resolution: Final Report
 

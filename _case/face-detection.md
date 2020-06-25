@@ -1,5 +1,6 @@
 ---
 layout: case
+title: Face Detection
 ---
 <div class="content" data-view="detection">
     <h1>Face Detection Training Data</h1>
