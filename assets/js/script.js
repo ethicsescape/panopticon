@@ -474,6 +474,16 @@ if (tabId === "lookup" && viewId === "case") {
 
 if (tabId === "face-detection" && viewId === "case") {
     const codeSpan = document.querySelector("#training-code");
+    const updateCodeSpan = () => {
+        const accessCode = Array.from(document.querySelectorAll(".box-label")).map((el) => {
+            if (el.classList.contains("is-face")) {
+                return el.querySelector("[data-letter]").getAttribute("data-letter");
+            } else {
+                return "";
+            }
+        }).join("");
+        codeSpan.innerText = accessCode ? accessCode : "---";
+    };
     Array.from(document.querySelectorAll(".box-label")).forEach((box) => {
         const boxId = box.getAttribute("data-box");
         if (localStorage.hasOwnProperty(`panopticon_face_${boxId}`)) {
@@ -491,17 +501,11 @@ if (tabId === "face-detection" && viewId === "case") {
                 }
                 box.classList.add(label);
                 localStorage.setItem(`panopticon_face_${boxId}`, label);
-                const accessCode = Array.from(document.querySelectorAll(".box-label")).map((el) => {
-                    if (el.classList.contains("is-face")) {
-                        return el.querySelector("[data-letter]").getAttribute("data-letter");
-                    } else {
-                        return "";
-                    }
-                }).join("");
-                codeSpan.innerText = accessCode ? accessCode : "---";
+                updateCodeSpan();
             });
         });
     });
+    updateCodeSpan();
 }
 
 if (tabId === "hints" && viewId === "case") {
