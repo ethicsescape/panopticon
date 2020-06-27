@@ -5,8 +5,8 @@ title: Case
 <div class="content" data-view="case">
     <h1 class="uppercase">Case</h1>
     <h2>Situation Briefing</h2>
-    <p>You can review the situation briefing here.</p>
-    <a href="../document/briefing" class="button"><i class="fa fa-flag"></i> Open Briefing</a>
+    <p>You can rewatch the introduction video or reread the transcript here.</p>
+    <a href="../document/briefing" class="button"><i class="fa fa-flag"></i> Revisit Briefing</a>
     <hr>
     <h2>Stolen Merchandise</h2>
     <p>Below is the metadata about the affected merchandise, from the integrated case management system.</p>

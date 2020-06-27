@@ -782,7 +782,7 @@ span#mission-reminder.hidden {
     display: inline-block;
     position: relative;
     margin: 20px auto;
-    padding: 20px 10px;
+    padding: 0;
     text-align: left;
 }
 
@@ -794,9 +794,22 @@ span#mission-reminder.hidden {
     font-weight: bold;
 }
 
+.tracker h2 {
+    margin: 20px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.tracker .player-tracker {
+    padding: 10px;
+}
+
 .tracker .player-tracker.same-page {
     background: rgba(0, 255, 0, 0.5);
-    padding: 5px;
+}
+
+.player-tracker p {
+    word-wrap: break-word;
 }
 
 @media screen and (max-width: 1050px) {

@@ -391,8 +391,9 @@ app.get("/api/game/toggle/:gameid", (request, response) => {
     const systemId = request.query.system;
     db.ref(`${ROOT}/games/${gameId}/systems/${systemId}`).once("value", (snap) => {
         const state = snap.val() == null ? true : snap.val();
-        db.ref(`${ROOT}/games/${gameId}/systems/${systemId}`).set(!state).then(() => {
-            response.send({ success: true });
+        const newState = !state;
+        db.ref(`${ROOT}/games/${gameId}/systems/${systemId}`).set(newState).then(() => {
+            response.send({ success: true, state:  newState });
         }).catch((err) => {
             response.send({ success: false, err: err });
         });

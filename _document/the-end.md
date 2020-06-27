@@ -39,3 +39,13 @@ Investigators later interviewed and reviewed CCTV footage of the other suspects:
 **<span data-shopper="6362">Shopper #6362</span>** was visiting town for the football game, browsed the store to see what jerseys they had, picked up the Michael Vick jersey and tried it on in the fitting room, but decided that it might be too controversial to wear and bought a different jersey instead.
 
 **<span data-shopper="2193">Shopper #2193</span>** brought her eight-year-old son **<span data-shopper="1943">Shopper #1943</span>** to buy a tent for their upcoming camping trip and had to say no to a jersey he saw and wanted to buy.
+
+## Data Forensics
+
+Our Data Forensics Unit also investigated the surveillance analytics system created by Panopticon Security and used by Mark's Department Store. They identified three inconsistencies relevant to this case:
+
+1. The system indicates that Shopper #1263 departed the store at 4:47:36 PM. Yet, it shows "eye-tracking" data for this shopper captured at 4:50:00 PM.
+2. The "movement tracking" data for Shopper #1263 shows a suspicious jump around 4:47:15 PM, where this shopper appears to somehow "teleport" from the exit to a fitting room.
+3. The system allows for "administrative data linkage" with the store's data removal request form, connecting a name and address from a form to the "anonymous" shopper ID, but this does not appear to guarantee the identity of the requester or the shopper.
+
+These inconsistencies pose a serious threat to fair and just investigations.

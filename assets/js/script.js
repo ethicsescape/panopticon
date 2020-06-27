@@ -195,7 +195,8 @@ function clearLocalGameData() {
     Object.keys(localStorage).forEach((key) => {
         const isFace = key.indexOf("panopticon_face_") === 0;
         const isDecision = key.indexOf("panopticon_decision_") === 0;
-        if (isFace || isDecision) {
+        const isPlayer = key.indexOf("panopticon_player_") === 0;
+        if (isFace || isDecision || isPlayer) {
             localStorage.removeItem(key);
         }
     });
@@ -359,11 +360,19 @@ if (tabId === "activate") {
             const statusEl = sectionEl.querySelector(".status");
             const toggleEl = sectionEl.querySelector(".button");
             toggleEl.addEventListener("click", (e) => {
-                const entered = prompt(`DANGER: Are you sure you want to deactivate the ${systemId} layer? Type "${systemId}" to confirm.`);
-                if (entered === systemId) {
+                const isActive = statusEl.innerText.toLowerCase() === "active";
+                let entered;
+                if (isActive) {
+                    entered = prompt(`DANGER: Are you sure you want to deactivate the ${systemId} layer? Type "${systemId}" to confirm.`);
+                }
+                if (entered === systemId || !isActive) {
                     fetch(`${API_ROOT}/api/game/toggle/${gameId}?system=${systemId}`).then((res) => {
                         if (res.success) {
-                            showMessage(sysMessageEl, true, `Operation confirmed. Successfully updated ${systemId}.`);
+                            if (res.state) {
+                            showMessage(sysMessageEl, true, `Success. The ${systemId} layer has been reactivated. The data backlog you missed while the system was deactivated will be ingested.`);
+                            } else {
+                            showMessage(sysMessageEl, true, `Operation confirmed. Future data will not be ingested by the ${systemId} layer. Do not worry, your historical data is still persisted. If you deactivated this system by mistake, you can still reactivate this system within two hours and the data backlog you missed will be ingested.`);                                
+                            }
                         } else {
                             showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game facilitator.`);
                         }
@@ -1000,6 +1009,40 @@ function leftpad(d) {
     return s;
 }
 
+function renderPlayerTracker(teammateId, nameMap, yourPage, theirPage) {
+    const trackerEl = document.querySelector("#team-tracker");
+    if (!trackerEl) {
+        return;
+    }
+    if (!document.querySelector(`[data-teammate=${teammateId}]`)) {
+        const div = document.createElement("div");
+        const p = document.createElement("p");
+        const pa = document.createElement("p");
+        const a = document.createElement("a");
+        div.setAttribute("data-teammate", teammateId);
+        div.classList.add("player-tracker");
+        p.classList.add("name");
+        pa.classList.add("link")
+        pa.appendChild(a);
+        div.appendChild(p);
+        div.appendChild(pa);
+        trackerEl.appendChild(div);
+    }
+    const mateEl = document.querySelector(`[data-teammate=${teammateId}]`);
+    mateEl.querySelector("p").innerText = nameMap[teammateId];
+    mateEl.querySelector("a").innerText = theirPage.title;
+    mateEl.querySelector("a").href = theirPage.link;
+    if (theirPage.link === yourPage.link) {
+        if (!mateEl.classList.contains("same-page")) {
+            mateEl.classList.add("same-page");
+        }
+    } else {
+        if (mateEl.classList.contains("same-page")) {
+            mateEl.classList.remove("same-page");
+        }
+    }
+}
+
 function updateGame() {
     const gameId = localStorage.getItem(GAME_PROPERTY);
     const userId = localStorage.getItem(USER_PROPERTY);
@@ -1032,6 +1075,23 @@ function updateGame() {
             }
             cluesEl.appendChild(clueEl);
         });
+    }
+    // Set up team tracker sidebar
+    const trackerEl = document.querySelector("#team-tracker");
+    if (trackerEl) {
+        if (localStorage.hasOwnProperty("panopticon_player_list")) {
+            const trackerPlayerList = JSON.parse(localStorage.getItem("panopticon_player_list"));
+            trackerPlayerList.forEach((teammateId) => {
+                const localNameMap = {
+                    [teammateId]: localStorage.getItem(`panopticon_player_name_${teammateId}`)
+                };
+                const localTheirPage = {
+                    title: localStorage.getItem(`panopticon_player_page_${teammateId}`),
+                    link: localStorage.getItem(`panopticon_player_link_${teammateId}`)
+                };
+                renderPlayerTracker(teammateId, localNameMap, yourPage, localTheirPage);
+            });
+        }
     }
     // Listen for updates
     db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
@@ -1121,37 +1181,14 @@ function updateGame() {
         const nameMap = data.names || {};
         const gameMissionMap = data.missions || {};
         // Team Tracker
-        const trackerEl = document.querySelector("#team-tracker");
         if (trackerEl) {
+            localStorage.setItem(`panopticon_player_list`, JSON.stringify(Object.keys(data.current)));
             for (let teammateId in data.current) {
-                if (!document.querySelector(`[data-teammate=${teammateId}]`)) {
-                    const div = document.createElement("div");
-                    const p = document.createElement("p");
-                    const pa = document.createElement("p");
-                    const a = document.createElement("a");
-                    div.setAttribute("data-teammate", teammateId);
-                    div.classList.add("player-tracker");
-                    p.classList.add("name");
-                    pa.classList.add("link")
-                    pa.appendChild(a);
-                    div.appendChild(p);
-                    div.appendChild(pa);
-                    trackerEl.appendChild(div);
-                }
-                const mateEl = document.querySelector(`[data-teammate=${teammateId}]`);
                 const theirPage = data.current[teammateId];
-                mateEl.querySelector("p").innerText = nameMap[teammateId];
-                mateEl.querySelector("a").innerText = theirPage.title;
-                mateEl.querySelector("a").href = theirPage.link;
-                if (theirPage.link === yourPage.link) {
-                    if (!mateEl.classList.contains("same-page")) {
-                        mateEl.classList.add("same-page");
-                    }
-                } else {
-                    if (mateEl.classList.contains("same-page")) {
-                        mateEl.classList.remove("same-page");
-                    }
-                }
+                localStorage.setItem(`panopticon_player_name_${teammateId}`, nameMap[teammateId]);
+                localStorage.setItem(`panopticon_player_page_${teammateId}`, theirPage.title);
+                localStorage.setItem(`panopticon_player_link_${teammateId}`, theirPage.link);
+                renderPlayerTracker(teammateId, nameMap, yourPage, theirPage);
             }
         }
         // Mission Icon
