@@ -75,7 +75,7 @@ function getViewId(offset = 0) {
 function getCurrentPage() {
     const siteRoot = getSiteRoot();
     const fullLink = window.location.href;
-    const link = `..${fullLink.split(siteRoot)[1]}`;
+    const link = fullLink.split(siteRoot)[1];
     const title = document.title;
     return { title, link };
 }
@@ -120,7 +120,8 @@ const db = window.firebase ? firebase.database() : false;
 const PROD_PROPERTY = "panopticon_force_prod";
 const GAME_PROPERTY = "panopticon_game_id";
 const USER_PROPERTY = "panopticon_user_id";
-const VIEWED_MISSION_PROPERTY = "panopticon_viewed_mission";
+const FLAG_VIEWED_MISSION = "panopticon_flag_viewed_mission";
+const FLAG_GAME_NOT_STARTED = "panopticon_flag_game_not_started";
 const FIREBASE_ROOT = "panopticon";
 const FORCE_PROD = localStorage.hasOwnProperty(PROD_PROPERTY);
 const API_ROOT = getAPIRoot(FORCE_PROD);
@@ -188,7 +189,6 @@ const sidebarClues = [
 
 
 function clearLocalGameData() {
-    localStorage.removeItem(VIEWED_MISSION_PROPERTY);
     sidebarClues.forEach((clueId) => {
         localStorage.removeItem(`panopticon_clue_${clueId}`);
     });
@@ -196,7 +196,8 @@ function clearLocalGameData() {
         const isFace = key.indexOf("panopticon_face_") === 0;
         const isDecision = key.indexOf("panopticon_decision_") === 0;
         const isPlayer = key.indexOf("panopticon_player_") === 0;
-        if (isFace || isDecision || isPlayer) {
+        const isFlag = key.indexOf("panopticon_flag_") === 0;
+        if (isFace || isDecision || isPlayer || isFlag) {
             localStorage.removeItem(key);
         }
     });
@@ -239,7 +240,7 @@ if (tabEl) {
 }
 
 const remMisEl = document.querySelector("#mission-reminder");
-if (!localStorage.hasOwnProperty(VIEWED_MISSION_PROPERTY) && remMisEl) {
+if (!localStorage.hasOwnProperty(FLAG_VIEWED_MISSION) && remMisEl) {
     showEl(remMisEl);
 }
 
@@ -250,6 +251,12 @@ if (viewId === "secure") {
     const messageEl = document.querySelector("[data-view=secure] .message");
     const elephant = cleanPassword(atob(document.querySelector("#elephant").innerText));
     const viper = decodeURI(atob(document.querySelector("#viper").innerText));
+    const incorrectMessages = [
+        "Incorrect password.",
+        "That is not correct.",
+        "Please try again."
+    ];
+    let attempts = 0;
 
     const openDocument = () => {
         // Navigate automatically
@@ -266,7 +273,6 @@ if (viewId === "secure") {
         const accessCode = cleanPassword(input.value);
         const gameId = localStorage.getItem(GAME_PROPERTY);
         const userId = localStorage.getItem(USER_PROPERTY);
-        attempts++;
         if (accessCode === elephant) {
             fetch(`${API_ROOT}/api/unlock/${clueId}?code=${accessCode}&game=${gameId}&user=${userId}`);
             if (messageEl.classList.contains("failure")) {
@@ -279,8 +285,9 @@ if (viewId === "secure") {
             }, 1000);
         } else {
             messageEl.classList.add("failure");
-            messageEl.innerText = `Incorrect password (attempted ${attempts} time${attempts === 1 ? "" : "s"}).`;
+            messageEl.innerText = incorrectMessages[attempts % incorrectMessages.length];
         }
+        attempts++;
     };
     
     input.focus();
@@ -292,7 +299,6 @@ if (viewId === "secure") {
             openDocument();   
         }
     }
-    let attempts = 0;
     button.addEventListener("click", accessDocument);
     input.addEventListener("keypress", (e) => {
         if (e.keyCode === 13) {
@@ -621,18 +627,21 @@ function doIntro() {
     });
     // Play Game
     const startBtn = document.querySelector("#start-game");
+    const msgStart = document.querySelector("#start-message");
     startBtn.addEventListener("click", (e) => {
-        fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
-            if (res.success) {
-                window.location = `${SITE_ROOT}/case/info`;  
-            } else {
-                alert("Failed to start game. Contact vingkan@gmail.com for help.");
-                console.error(res);
-            }
-        }).catch((err) => {
-            alert("Failed to start game. Contact vingkan@gmail.com for help.");
-            console.error(err);
-        });
+        if (localStorage.getItem(FLAG_GAME_NOT_STARTED) === "false") {
+            window.location = `${SITE_ROOT}/case/info`;
+        } else {
+            fetch(`${API_ROOT}/api/game/start/${gameId}`).then((res) => {
+                if (!res.success) {
+                    console.error(res);
+                    showMessage(msgStart, false, "Failed to start game. Please reload and try again.");
+                }
+            }).catch((err) => {
+                console.error(err);
+                showMessage(msgStart, false, "Failed to start game. Please reload and try again.");
+            });
+        }
     });
     // Create Shared Notepad
     const showDriveError = (el) => {
@@ -1031,7 +1040,8 @@ function renderPlayerTracker(teammateId, nameMap, yourPage, theirPage) {
     const mateEl = document.querySelector(`[data-teammate=${teammateId}]`);
     mateEl.querySelector("p").innerText = nameMap[teammateId];
     mateEl.querySelector("a").innerText = theirPage.title;
-    mateEl.querySelector("a").href = theirPage.link;
+    // Value of link already has preceding slash (for case of index), so just append to site root.
+    mateEl.querySelector("a").href = `${SITE_ROOT}${theirPage.link}`;
     if (theirPage.link === yourPage.link) {
         if (!mateEl.classList.contains("same-page")) {
             mateEl.classList.add("same-page");
@@ -1079,24 +1089,50 @@ function updateGame() {
     // Set up team tracker sidebar
     const trackerEl = document.querySelector("#team-tracker");
     if (trackerEl) {
-        if (localStorage.hasOwnProperty("panopticon_player_list")) {
-            const trackerPlayerList = JSON.parse(localStorage.getItem("panopticon_player_list"));
-            trackerPlayerList.forEach((teammateId) => {
-                const localNameMap = {
-                    [teammateId]: localStorage.getItem(`panopticon_player_name_${teammateId}`)
-                };
-                const localTheirPage = {
-                    title: localStorage.getItem(`panopticon_player_page_${teammateId}`),
-                    link: localStorage.getItem(`panopticon_player_link_${teammateId}`)
-                };
-                renderPlayerTracker(teammateId, localNameMap, yourPage, localTheirPage);
-            });
+        if (localStorage.getItem(FLAG_GAME_NOT_STARTED) === "false") {
+            showEl(trackerEl.parentElement);
+            if (localStorage.hasOwnProperty("panopticon_player_list")) {
+                const trackerPlayerList = JSON.parse(localStorage.getItem("panopticon_player_list"));
+                trackerPlayerList.forEach((teammateId) => {
+                    const localNameMap = {
+                        [teammateId]: localStorage.getItem(`panopticon_player_name_${teammateId}`)
+                    };
+                    const localTheirPage = {
+                        title: localStorage.getItem(`panopticon_player_page_${teammateId}`),
+                        link: localStorage.getItem(`panopticon_player_link_${teammateId}`)
+                    };
+                    renderPlayerTracker(teammateId, localNameMap, yourPage, localTheirPage);
+                });
+            }            
+        } else {
+            hideEl(trackerEl.parentElement);
         }
     }
     // Listen for updates
     db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
         const data = snap.val() || {};
         const unlockedMap = data.unlocked || {};
+        // Enter the game
+        if (viewId === "intro") {
+            const msgStart = document.querySelector("#start-message");
+            if (!data.started) {
+                localStorage.setItem(FLAG_GAME_NOT_STARTED, true);
+            }
+            if (localStorage.getItem(FLAG_GAME_NOT_STARTED) !== "false" && data.started) {
+                localStorage.setItem(FLAG_GAME_NOT_STARTED, false);
+                let t = 3;
+                showMessage(msgStart, true, `Countdown started. Taking you to the game in ${t}...`);
+                const interval = setInterval(() => {
+                    t--;
+                    showMessage(msgStart, true, `Countdown started. Taking you to the game in ${t}...`);
+                    if (t === 0) {
+                        clearInterval(interval);
+                        window.location = `${SITE_ROOT}/case/info`;
+                    }
+                }, 1000);
+            }
+        }
+        // Update sidebar
         if (sidebar) {
             const startedLocalTime = new Date(data.started).getTime();
             const updateTimer = () => {
@@ -1182,13 +1218,18 @@ function updateGame() {
         const gameMissionMap = data.missions || {};
         // Team Tracker
         if (trackerEl) {
-            localStorage.setItem(`panopticon_player_list`, JSON.stringify(Object.keys(data.current)));
-            for (let teammateId in data.current) {
-                const theirPage = data.current[teammateId];
-                localStorage.setItem(`panopticon_player_name_${teammateId}`, nameMap[teammateId]);
-                localStorage.setItem(`panopticon_player_page_${teammateId}`, theirPage.title);
-                localStorage.setItem(`panopticon_player_link_${teammateId}`, theirPage.link);
-                renderPlayerTracker(teammateId, nameMap, yourPage, theirPage);
+            if (data.started) {
+                showEl(trackerEl.parentElement);
+                localStorage.setItem(`panopticon_player_list`, JSON.stringify(Object.keys(data.current)));
+                for (let teammateId in data.current) {
+                    const theirPage = data.current[teammateId];
+                    localStorage.setItem(`panopticon_player_name_${teammateId}`, nameMap[teammateId]);
+                    localStorage.setItem(`panopticon_player_page_${teammateId}`, theirPage.title);
+                    localStorage.setItem(`panopticon_player_link_${teammateId}`, theirPage.link);
+                    renderPlayerTracker(teammateId, nameMap, yourPage, theirPage);
+                }                
+            } else {
+                hideEl(trackerEl.parentElement);
             }
         }
         // Mission Icon
@@ -1205,7 +1246,7 @@ function updateGame() {
                 if (coverEl) {
                     hideEl(remMisEl);
                     showEl(coverEl);
-                    localStorage.setItem(VIEWED_MISSION_PROPERTY, true);
+                    localStorage.setItem(FLAG_VIEWED_MISSION, true);
                 }
             });
         }
