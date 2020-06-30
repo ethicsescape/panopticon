@@ -5,6 +5,7 @@ title: Decision
 <div class="content decision-form" data-view="decision">
     <h1 class="uppercase">Decision</h1>
     <p>When you have determined your prime suspect, submit your choice here with your rationale to inform store management.</p>
+    <p>Only one person needs to submit this form.</p>
     <p>Data you enter here will be saved automatically. Feel free to reload the page or go to other tabs.</p>
     <div class="form">
         <select class="long-select">

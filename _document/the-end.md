@@ -22,9 +22,9 @@ After Rhule put back the jersey and left the store, Faulk entered a restroom and
 
 Investigators linked photographs of Faulk in disguise to anonymized **<span data-shopper="6871">shopper ID #6871</span>**. Security records show disguised Faulk entering the store at 4:47 PM, the time that investigators believe he was first detected by the system.
 
-Furthermore, even though the store security system shows Rhule leaving the store at approximately 4:42 PM, the associated digital profile includes “movement data” for Rhule from 4:50 PM to 4:55 PM. Investigators determined that this data is identical to the “movement data” associated with Faulk’s digital profile at those timestamps.
+Furthermore, even though the store security system shows Rhule leaving the store at approximately 4:47 PM, the associated digital profile includes “movement data” for Rhule from 4:50 PM to 4:59 PM. Investigators determined that this data is identical to the “movement data” associated with Faulk’s digital profile at those timestamps.
 
-Faulk admitted to taking the jersey off the rack, entering a fitting room, using a magnet to deactivate the anti-theft tag on the merchandise, wearing the jersey under his sweatshirt, and exiting the store without intent to purchase the merchandise at approximately 5:03 PM.
+Faulk admitted to taking the jersey off the rack, entering a fitting room, using a magnet to deactivate the anti-theft tag on the merchandise, wearing the jersey under his sweatshirt, and exiting the store without intent to purchase the merchandise at approximately 4:59 PM.
 
 Furthermore, Faulk admitted to creating an email account (topquarterback95@gmail.com) and using it to open an Ebay account under his control. He admitted to using this email to sign up for promotions and discounts from the store, using Rhule's name and address. Faulk admitted that his intent was to link Rhule to the theft and resale of the jersey and that the email account did not belong to Rhule.
 

@@ -155,7 +155,7 @@ const MISSIONS = [
     {
         id: "eye",
         name: "Eye",
-        goal: "Identify something the store does that makes life harder for Black people and suggest a way to improve it in your team’s recommendations to the store.",
+        goal: "Identify something the store does that makes life harder for Black people and suggest a way to improve it. When your team submits the decision form, get the writer to include your suggestion in your team’s recommendations to the store.",
         suggest: "A good mission for someone empathetic.",
         icon: "eye",
         recap: "identify something that harms Black people"
@@ -347,16 +347,26 @@ if (tabId === "activate") {
         }
     }
     const sysMessageEl = document.querySelector("#systems-message");
+    const deaMessageEl = document.querySelector("#deactivated-message");
     const gameId = localStorage.getItem(GAME_PROPERTY);
     if (gameId) {
         const systemIds = ["risk", "movement", "attention"];
         if (db) {
             db.ref(`${FIREBASE_ROOT}/games/${gameId}`).on("value", (snap) => {
                 const data = snap.val() || {};
+                let hasInactive = false;
                 if (data.systems) {
                     for (let systemId in data.systems) {
                         renderSystem(systemId, data.systems[systemId]);
+                        if (!data.systems[systemId]) {
+                            hasInactive = true;
+                        }
                     }
+                }
+                if (hasInactive) {
+                    showEl(deaMessageEl);
+                } else {
+                    hideEl(deaMessageEl);
                 }
             });
         }
@@ -377,7 +387,7 @@ if (tabId === "activate") {
                             if (res.state) {
                             showMessage(sysMessageEl, true, `Success. The ${systemId} layer has been reactivated. The data backlog you missed while the system was deactivated will be ingested.`);
                             } else {
-                            showMessage(sysMessageEl, true, `Operation confirmed. Future data will not be ingested by the ${systemId} layer. Do not worry, your historical data is still persisted. If you deactivated this system by mistake, you can still reactivate this system within two hours and the data backlog you missed will be ingested.`);                                
+                            showMessage(sysMessageEl, true, `Operation confirmed. Deactivated ${systemId} layer.`);                                
                             }
                         } else {
                             showMessage(sysMessageEl, false, `Failed to update ${systemId}. Contact the game facilitator.`);
@@ -966,13 +976,16 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
     Object.keys(voteMap).forEach((otherUserId) => {
         Object.keys(voteMap[otherUserId]).forEach((missionId) => {
             const votedForId = voteMap[otherUserId][missionId];
-            if (!(votedForId in popularMap)) {
-                popularMap[votedForId] = {};
+            // Skip votes for yourself
+            if (otherUserId !== votedForId) {
+                if (!(votedForId in popularMap)) {
+                    popularMap[votedForId] = {};
+                }
+                if (!(missionId in popularMap[votedForId])) {
+                    popularMap[votedForId][missionId] = 0;
+                }
+                popularMap[votedForId][missionId]++;
             }
-            if (!(missionId in popularMap[votedForId])) {
-                popularMap[votedForId][missionId] = 0;
-            }
-            popularMap[votedForId][missionId]++;
         });
     });
     const resMisEl = document.querySelector("#results-missions");
