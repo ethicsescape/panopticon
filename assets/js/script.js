@@ -994,7 +994,7 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
         if (data.party) {
             const partyLinkHolder = document.querySelector("#party-link");
             const partyLink = partyLinkHolder.querySelector("a");
-            partyLink.href = `/party?c=${data.party}`;
+            partyLink.href = `./party?c=${data.party}`;
             showEl(partyLinkHolder);
         }
         const resTimeEl = document.querySelector("#results-time");
