@@ -181,7 +181,8 @@ app.get("/api/game/create", (request, response) => {
                     const ref = db.ref(`${ROOT}/games`).push({
                         exists: true,
                         hostname: request.hostname,
-                        gateway: gateway
+                        gateway: gateway,
+                        party: accessData.party || null
                     });
                     const gameId = ref.key;
                     response.send({ success: true, gameId });
@@ -192,7 +193,8 @@ app.get("/api/game/create", (request, response) => {
                         const ref = db.ref(`${ROOT}/games`).push({
                             exists: true,
                             hostname: request.hostname,
-                            gateway: gateway
+                            gateway: gateway,
+                            party: accessData.party || null
                         });
                         const gameId = ref.key;
                         db.ref(`${ROOT}/access/${gateway}/game`).set(gameId).then((done) => {
@@ -215,6 +217,68 @@ app.get("/api/game/fetch/:gameid", (request, response) => {
         const data = snap.val();
         response.send({success: true, data });
     });
+});
+
+app.get("/api/party/add/:party", (request, response) => {
+    const party = request.params.party;
+    const gatewayCodes = request.query.gateways;
+    const adminSecret = request.query.admin;
+    if (process.env.ADMIN_SECRET && adminSecret === process.env.ADMIN_SECRET) {
+        if (party && gatewayCodes) {
+            const gateways = gatewayCodes.split(",").map(t => t.trim()).filter(t => t.length > 0);
+            Promise.all(gateways.map((gateway) => {
+                return new Promise((resolve, reject) => {
+                    db.ref(`${ROOT}/access/${gateway}`).once("value", (snap) => {
+                        const accessData = snap.val() || false;
+                        if (accessData) {
+                            const action = db.ref(`${ROOT}/access/${gateway}/party`).set(party);
+                            action.then(() => {
+                                if (accessData.party) {
+                                    if (accessData.party === party) {
+                                        resolve({ success: true, gateway, message: `Already in this party.` });    
+                                    } else {
+                                        resolve({ success: true, gateway, message: `Overwrote old party (${accessData.party}).` });    
+                                    }
+                                    
+                                } else {
+                                    resolve({ success: true, gateway, message: "Added to party." });
+                                }
+                            }).catch((err) => {
+                                resolve({ success: false, gateway, message: "Could not add access code to party.", err });
+                            });
+                        } else {
+                            resolve({ success: false, gateway, message: "Access code does not exist." });
+                        }
+                    });
+                });
+            })).then((results) => {
+                let failCount = 0;
+                const message = results.map((status) => {
+                    failCount += (status.success ? 0 : 1);
+                    return `${status.success ? "Successfully added" : "Failed to add"} ${status.gateway} to party: ${party}. ${status.message}`;
+                }).join("\n");
+                response.send({ success: failCount === 0, message });    
+            }).catch((err) => {
+                response.send({ success: false, message: "Failed to update some access codes.", err });    
+            });
+        } else {
+            response.send({ success: false, message: "Missing party ID and access codes." });
+        }
+    } else {
+        response.send({ success: false, message: "Invalid administrative password." });
+    }
+});
+
+app.get("/api/party/fetch/:party", (request, response) => {
+    const party = request.params.party;
+    if (party) {
+        db.ref(`${ROOT}/games`).orderByChild("party").equalTo(party).once("value", (snap) => {
+            const games = snap.val() || {};
+            response.send({ success: true, games });
+        });
+    } else {
+        response.send({ success: false, message: "Missing party ID." });
+    }
 });
 
 function setScreenName(gameId, userId, name, override) {

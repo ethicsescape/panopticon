@@ -292,6 +292,10 @@ p {
     width: 300px;
 }
 
+input.dark-outline {
+    border: 2px solid black;
+}
+
 .form button {
     background: black;
     color: white;

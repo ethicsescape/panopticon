@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Virtual escape room about surveillance technology.">
+        <meta property="og:image" content="https://ethicsescape.github.io/panopticon/assets/img/screenshot_clues.png">
+        <title>Panopticon</title>
+        <link id="favicon" rel="icon" href="https://ethicsescape.github.io/panopticon/assets/img/logo-white.png" type="image/png">
+
+        <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <link rel="stylesheet" href="./assets/css/reset.css">
+        <link rel="stylesheet" href="./assets/css/style.css">
+        <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-database.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <a href="./" class="tab"><img alt="Logo" src="./assets/img/logo-white.png" /> Panopticon Escape Room Game</a>
+        </div>
+        <div class="app">
+            <div class="page">
+                <div class="content" data-view="admin">
+                    <h1 class="centered uppercase">Administration</h1>
+                    <h2>Group Events</h2>
+                    <h3>Password</h3>
+                    <div class="form">
+                        <input id="admin-secret" type="password" class="long-input dark-outline" />
+                    </div>
+                    <h3>Party ID</h3>
+                    <div class="form">
+                        <input id="party" type="text" class="long-input dark-outline" />
+                    </div>
+                    <h3>Game Access Codes</h3>
+                    <div class="form">
+                        <textarea id="gateways"></textarea>
+                    </div>
+                    <button id="party-submit" class="button primary">Submit</button>
+                    <p id="party-message" class="message"></p>
+                </div>
+            </div>
+        </div>
+        <script src="./assets/js/script.js" defer></script>
+    </body>
+</html>

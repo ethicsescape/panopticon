@@ -574,6 +574,125 @@ if (tabId === "hints" && viewId === "case") {
     });
 }
 
+function makeTableRowOf(tag, cells, statusMap = {}) {
+    const tr = document.createElement("tr");
+    cells.forEach((content, i) => {
+        const td = document.createElement(tag);
+        td.innerText = content;
+        if (i in statusMap) {
+            td.classList.add("message");
+            td.classList.add(statusMap[i] ? "success" : "failure");
+        }
+        tr.appendChild(td);
+    });
+    return tr;
+}
+
+function getFinalSubmission(data) {
+    if (!data.decisions) {
+        return false;
+    }
+    const submissions = Object.keys(data.decisions).map((key) => {
+        return data.decisions[key];
+    }).sort((a, b) => {
+        return b.timestamp - a.timestamp;
+    });
+    return submissions[0];
+}
+
+if (viewId === "party") {
+    const leaderboardEl = document.querySelector("#leaderboard");
+    const partyMsg = leaderboardEl.querySelector("p");
+    if (localStorage.hasOwnProperty(GAME_PROPERTY)) {
+        showEl(document.querySelector("#team-link"))
+    }
+    if (window.location.href.indexOf("?c=") > -1) {
+        const party = window.location.href.split("?c=")[1].split("&")[0];
+        fetch(`${API_ROOT}/api/party/fetch/${party}`).then((res) => {
+            if (res.success) {
+                const partyGames = Object.keys(res.games).map((k) => {
+                    const data = res.games[k]
+                    const final = getFinalSubmission(data);
+                    const cluesUnlocked = Object.keys(final.unlocked).length;
+                    const correct = btoa(final.suspect) === "U2hvcHBlciAjNjg3MQ==";
+                    return { ...data, id: k, final, cluesUnlocked, correct };
+                }).filter((d) => d.final).sort((a, b) => {
+                    if ((a.correct && b.correct) || (!a.correct && !b.correct)) {
+                        if (a.cluesUnlocked === b.cluesUnlocked) {
+                            return (a.final.timestamp - a.started) - (b.final.timestamp - b.started);
+                        } else {
+                            return b.cluesUnlocked - a.cluesUnlocked;
+                        }
+                    } if (a.correct) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+                if (partyGames.length > 0) {
+                    const tableEl = document.createElement("table");
+                    const thr = makeTableRowOf("th", [
+                        "Players",
+                        "Suspect",
+                        "Time",
+                        "Clues",
+                        "Rationale",
+                        "Recommendations"
+                    ]);
+                    tableEl.appendChild(thr);
+                    const cluesTotal = sidebarClues.length;
+                    partyGames.forEach((data) => {
+                        const time = getTimeDiffData(data.final.timestamp, data.started);
+                        const trd = makeTableRowOf("td", [
+                            Object.keys(data.names).map((k) => data.names[k]).join(", "),
+                            data.final.suspect,
+                            `${leftpad(time.mins)}:${leftpad(time.secs)}`,         
+                            `${data.cluesUnlocked}/${cluesTotal}`,
+                            data.final.rationale,
+                            data.final.recommendations
+                        ], {
+                            1: data.correct,
+                            2: time.mins < 60,
+                            3: data.cluesUnlocked === cluesTotal
+                        });
+                        tableEl.appendChild(trd);
+                    });
+                    leaderboardEl.innerHTML = "";
+                    leaderboardEl.appendChild(tableEl);
+                } else {
+                    showMessage(partyMsg, false, `No completed games found for party: ${party}`);
+                }
+            } else {
+                showMessage(partyMsg, false, `No completed games found for party: ${party}`);
+            }
+        });
+    } else {
+        showMessage(partyMsg, false, `No party code found. Do you have the right link?`);
+    }
+}
+
+if (viewId === "admin") {
+    const partyMsg = document.querySelector("#party-message");
+    const submitBtn = document.querySelector("#party-submit");
+    const adminInput = document.querySelector("#admin-secret");
+    const partyInput = document.querySelector("#party");
+    const gatewaysTextarea = document.querySelector("#gateways");
+    submitBtn.addEventListener("click", (e) => {
+        const party = partyInput.value;
+        const gatewayCodes = gatewaysTextarea.value;
+        const secret = adminInput.value;
+        if (party && gateways && secret) {
+            const gateways = gatewayCodes.trim().split("\n").map((t) => t.trim()).join(",");
+            const reqUrl = `${API_ROOT}/api/party/add/${party}?gateways=${encodeURIComponent(gateways)}&admin=${encodeURIComponent(btoa(secret))}`;
+            fetch(reqUrl).then((res) => {
+                showMessage(partyMsg, res.success, res.message);
+            });
+        } else {
+            showMessage(partyMsg, false, "Missing password, party ID, or game codes.");
+        }
+    });
+}
+
 function doIntro() {
     sendHomeIfNotInGame();
     const gameId = localStorage.getItem(GAME_PROPERTY);
@@ -872,6 +991,12 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
     const gameMissionMap = data.missions || {};
     if (finalSubmission && concEl.getAttribute("data-state") === "empty") {
         concEl.setAttribute("data-state", "filled");
+        if (data.party) {
+            const partyLinkHolder = document.querySelector("#party-link");
+            const partyLink = partyLinkHolder.querySelector("a");
+            partyLink.href = `/party?c=${data.party}`;
+            showEl(partyLinkHolder);
+        }
         const resTimeEl = document.querySelector("#results-time");
         const resSusEl = document.querySelector("#results-suspect");
         const timeDiff = getTimeDiffData(finalSubmission.timestamp, data.started);
@@ -1341,12 +1466,7 @@ function updateGame() {
             if (endLink) {
                 showEl(endLink);
             }
-            const submissions = Object.keys(data.decisions).map((key) => {
-                return data.decisions[key];
-            }).sort((a, b) => {
-                return b.timestamp - a.timestamp;
-            });
-            finalSubmission = submissions[0];
+            finalSubmission = getFinalSubmission(data);
             const suspectId = finalSubmission.suspect.split("#")[1];
             const suspectTag = document.querySelector(`[data-shopper="${suspectId}"]`);
             if (suspectTag && suspectTag.innerText.indexOf("selected") < 0) {
