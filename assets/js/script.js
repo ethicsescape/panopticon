@@ -613,15 +613,20 @@ if (viewId === "party") {
                 const partyGames = Object.keys(res.games).map((k) => {
                     const data = res.games[k]
                     const final = getFinalSubmission(data);
-                    const cluesUnlocked = Object.keys(final.unlocked).length;
+                    const cluesUnlocked = Object.keys(final.unlocked || {}).length;
+                    const systemsDeactivated = Object.keys(final.systems || {}).filter(k => final.systems[k] === false).length;
                     const correct = btoa(final.suspect) === "U2hvcHBlciAjNjg3MQ==";
-                    return { ...data, id: k, final, cluesUnlocked, correct };
+                    return { ...data, id: k, final, cluesUnlocked, systemsDeactivated, correct };
                 }).filter((d) => d.final).sort((a, b) => {
                     if ((a.correct && b.correct) || (!a.correct && !b.correct)) {
-                        if (a.cluesUnlocked === b.cluesUnlocked) {
-                            return (a.final.timestamp - a.started) - (b.final.timestamp - b.started);
+                        if (a.systemsDeactivated === b.systemsDeactivated) {
+                            if (a.cluesUnlocked === b.cluesUnlocked) {
+                                return (a.final.timestamp - a.started) - (b.final.timestamp - b.started);
+                            } else {
+                                return b.cluesUnlocked - a.cluesUnlocked;
+                            }                            
                         } else {
-                            return b.cluesUnlocked - a.cluesUnlocked;
+                            return b.systemsDeactivated - a.systemsDeactivated;
                         }
                     } if (a.correct) {
                         return -1;
@@ -632,12 +637,13 @@ if (viewId === "party") {
                 if (partyGames.length > 0) {
                     const tableEl = document.createElement("table");
                     const thr = makeTableRowOf("th", [
-                        "Players",
-                        "Suspect",
-                        "Time",
-                        "Clues",
-                        "Rationale",
-                        "Recommendations"
+                        "Player Names",
+                        "Escape Time",
+                        "Suspect Chosen",
+                        "Systems Deactivated",
+                        "Clues Unlocked",
+                        "Suspect Rationale",
+                        "Recommendations for Store",
                     ]);
                     tableEl.appendChild(thr);
                     const cluesTotal = sidebarClues.length;
@@ -645,15 +651,17 @@ if (viewId === "party") {
                         const time = getTimeDiffData(data.final.timestamp, data.started);
                         const trd = makeTableRowOf("td", [
                             Object.keys(data.names).map((k) => data.names[k]).join(", "),
+                            `${leftpad(time.mins)}:${leftpad(time.secs)}`,
                             data.final.suspect,
-                            `${leftpad(time.mins)}:${leftpad(time.secs)}`,         
+                            `${data.systemsDeactivated}/3`,
                             `${data.cluesUnlocked}/${cluesTotal}`,
                             data.final.rationale,
-                            data.final.recommendations
+                            data.final.recommendations,
                         ], {
-                            1: data.correct,
-                            2: time.mins < 60,
-                            3: data.cluesUnlocked === cluesTotal
+                            1: time.mins < 60,
+                            2: data.correct,
+                            3: data.systemsDeactivated > 0,
+                            4: data.cluesUnlocked === cluesTotal,
                         });
                         tableEl.appendChild(trd);
                     });
