@@ -150,21 +150,39 @@ app.get("/api/unlock/:clueid", (request, response) => {
     }
 });
 
+const customerData = {
+    "topquarterback95@gmail.com": [
+        "Customer Found:",
+        "Name: James Rhule",
+        "Street: 1973 Central Lane",
+        "City: Philadelphia",
+        "State: PA",
+        "Country: USA",
+        "Phone: (267) 382-1984"
+    ],
+    "joyfulmom86@aol.com": [
+        "Customer Found:",
+        "Name: Simone Gray",
+        "Street: 86 Lantern Street Unit #215",
+        "City: Philadelphia",
+        "State: PA",
+        "Country: USA",
+        "Phone: (267) 792-5102"
+    ],
+};
+
 app.get("/api/lookup", (request, response) => {
     const email = request.query.email;
-    if (email && email.toLowerCase() === "topquarterback95@gmail.com") {
-        const customer = [
-            "Customer Found:",
-            "Name: James Rhule",
-            "Street: 1973 Central Lane",
-            "City: Philadelphia",
-            "State: PA",
-            "Country: USA",
-            "Phone: (267) 382-1984"
-        ];
-        response.send({ success: true, message: customer.join("\n") });
+    if (email) {
+        const findEmail = email.toLowerCase();
+        if (findEmail in customerData) {
+            const customer = customerData[findEmail];
+            response.send({ success: true, message: customer.join("\n") });
+        } else {
+            response.send({ success: false, message: `No records found for ${findEmail}.` });    
+        }
     } else {
-        response.send({ success: false, message: `No records found for ${email}.` });
+        response.send({ success: false, message: "No records found. Enter a valid email address." });
     }
 });
 

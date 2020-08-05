@@ -2,11 +2,14 @@
 layout: case
 title: Observations
 ---
-# Subject: Security Observations
+
+# Security Observations
 
 **From:** security@marksdepartmentstore.com
 
 **To:** loss@marksdepartmentstore.com
+
+**Subject:** Security Observations
 
 ---
 

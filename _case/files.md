@@ -21,7 +21,7 @@ title: Files
             </ul>
         </li>
         <li>
-            <span class="folder"><i class="fa fa-folder"></i> Marketing</span>
+            <span class="folder"><i class="fa fa-folder"></i> Rewards Program</span>
             <ul class="nonlist">
                 <li><a href="../secure/lookup" class="file"><i class="fa fa-file-code-o"></i> reverse_email_lookup.exe</a></li>
             </ul>

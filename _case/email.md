@@ -36,6 +36,13 @@ title: Email
                 <span class="email-time">5:59 PM</span>
             </a>
         </li>
+        <li class="email-holder">
+            <a href="../document/coupons" class="email">
+                <i class="fa fa-envelope-o"></i>
+                <span> Stupid Coupons!!</span>
+                <span class="email-time">5:52 PM</span>
+            </a>
+        </li>
     </ul>
     <hr>
     <p><strong>Notice:</strong> Sharing emails outside of this platform other than as part of sanctioned collaboration with law enforcement is a violation of corporate security policy.</p>
