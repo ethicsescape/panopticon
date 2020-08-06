@@ -17,10 +17,10 @@ Look for the subject line:
 Man, I really hate those tech companies profiting off my data.
 
 1. Text-to-speech tool that does not save any audio data and encrypts your text data.
-1. Research firm sells analytics predicting optimal repair times to an airline company based only on plane conditions. No data on human subjects is collected or sold.
+1. Research firm sells analytics predicting optimal repair times to an airline company based only on digital plane sensors. No data on human subjects is collected or sold.
 1. Social media website analyzes user likes and posts to sell third parties insights on how to improve their advertisements. 
 1. Car manufacturer adds a digital system to prevent starting the vehicle if the driver appears to be under the influence. The data is not used for any other purpose.
-1. Wellness technology company collects data on user activity levels, biometrics, and nutrition through a smartwatch app and sells it to health insurance company.
+1. Wellness technology company collects data on user activity levels, biometrics, and nutrition through a smartwatch app and sells it to a health insurance company.
 
 ---
 
