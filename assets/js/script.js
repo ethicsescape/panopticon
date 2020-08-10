@@ -187,6 +187,11 @@ const sidebarClues = [
     "lookup",
 ];
 
+const RESOLUTION_CLUE = "resolution";
+
+const ignoreClues = {
+    "resolution": true,
+};
 
 function clearLocalGameData() {
     sidebarClues.forEach((clueId) => {
@@ -600,6 +605,18 @@ function getFinalSubmission(data) {
     return submissions[0];
 }
 
+function getFirstSubmission(data) {
+    if (!data.decisions) {
+        return false;
+    }
+    const submissions = Object.keys(data.decisions).map((key) => {
+        return data.decisions[key];
+    }).sort((a, b) => {
+        return a.timestamp - b.timestamp;
+    });
+    return submissions[0];
+}
+
 if (viewId === "party") {
     const leaderboardEl = document.querySelector("#leaderboard");
     const partyMsg = leaderboardEl.querySelector("p");
@@ -612,11 +629,28 @@ if (viewId === "party") {
             if (res.success) {
                 const partyGames = Object.keys(res.games).map((k) => {
                     const data = res.games[k]
-                    const final = getFinalSubmission(data);
-                    const cluesUnlocked = Object.keys(final.unlocked || {}).length;
+                    // const final = getFinalSubmission(data);
+                    const final = getFirstSubmission(data);
+                    const finalUnlockedMap = final.unlocked || {};
+                    let possiblyPeekedEarly = false;
+                    if (RESOLUTION_CLUE in finalUnlockedMap) {
+                        const resolutionTimestamp = finalUnlockedMap[RESOLUTION_CLUE].at;
+                        possiblyPeekedEarly = resolutionTimestamp < final.timestamp;
+                    }
+                    const cluesUnlocked = Object.keys(finalUnlockedMap).filter((c) => {
+                        return !(c in ignoreClues);
+                    }).length;
                     const systemsDeactivated = Object.keys(final.systems || {}).filter(k => final.systems[k] === false).length;
                     const correct = btoa(final.suspect) === "U2hvcHBlciAjNjg3MQ==";
-                    return { ...data, id: k, final, cluesUnlocked, systemsDeactivated, correct };
+                    return {
+                        ...data,
+                        id: k,
+                        final,
+                        cluesUnlocked,
+                        systemsDeactivated,
+                        correct,
+                        possiblyPeekedEarly,
+                    };
                 }).filter((d) => d.final).sort((a, b) => {
                     if ((a.correct && b.correct) || (!a.correct && !b.correct)) {
                         if (a.systemsDeactivated === b.systemsDeactivated) {
@@ -655,7 +689,7 @@ if (viewId === "party") {
                             data.final.suspect,
                             `${data.systemsDeactivated}/3`,
                             `${data.cluesUnlocked}/${cluesTotal}`,
-                            data.final.rationale,
+                            data.possiblyPeekedEarly ? `(**Automatically Generated System Note:** This team may have peeked at the resolution before submitting their suspect. Feel free to dispute and discuss with the other teams.)\n\n${data.final.rationale}` : data.final.rationale,
                             data.final.recommendations,
                         ], {
                             1: time.mins < 60,
@@ -1474,7 +1508,8 @@ function updateGame() {
             if (endLink) {
                 showEl(endLink);
             }
-            finalSubmission = getFinalSubmission(data);
+            // finalSubmission = getFinalSubmission(data);
+            finalSubmission = getFirstSubmission(data);
             const suspectId = finalSubmission.suspect.split("#")[1];
             const suspectTag = document.querySelector(`[data-shopper="${suspectId}"]`);
             if (suspectTag && suspectTag.innerText.indexOf("selected") < 0) {
