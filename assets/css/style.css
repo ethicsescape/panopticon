@@ -823,3 +823,40 @@ span#mission-reminder.hidden {
     }
 
 }
+
+/* Support */
+
+.cause-card-holder {
+    text-align: center;
+}
+
+.cause-card {
+    display: inline-block;
+    text-align: center;
+    width: 200px;
+    padding: 0 20px;
+    padding-bottom: 20px;
+    margin: 0 auto;
+}
+
+.cause-card h3 {
+    text-decoration: none currentcolor solid !important;
+}
+
+.cause-card img {
+    border: 2px solid black;
+    display: inline-block;
+    margin: 10px auto;
+    width: 180px;
+    height: 180px;
+    padding: 0;
+}
+
+.cause-card .button {
+    background: black;
+    color: white;
+}
+
+.cause-card .button:hover {
+    background: blue;
+}

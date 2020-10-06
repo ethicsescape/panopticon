@@ -186,6 +186,72 @@ app.get("/api/lookup", (request, response) => {
     }
 });
 
+const DIGITS = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+function getRandomCode(nDigits) {
+    let code = "";
+    for (let i = 0; i < nDigits; i++) {
+        const ridx = Math.floor(Math.random() * DIGITS.length);
+        const digit = DIGITS[ridx];
+        code += digit;
+    }
+    return code;
+}
+
+function checkAndSaveCode(code, party) {
+    return new Promise((resolve, reject) => {
+        db.ref(`${ROOT}/access/${code}`).once("value", (snap) => {
+            const codeAlreadyExists = snap.val() || false;
+            if (codeAlreadyExists) {
+                resolve(false);
+            } else {
+                db.ref(`${ROOT}/access/${code}`).set({
+                    party: party,
+                    reusable: false
+                }).then(() => {
+                    resolve(true);
+                }).catch(() => {
+                    resolve(false);
+                });
+            }
+        });
+    });
+}
+
+async function createCodes(nCodes, useLeaderboard, maxRetries, nDigits) {
+    let codes = [];
+    let nRetries = 0;
+    while (codes.length < nCodes && nRetries < maxRetries) {
+        const code = getRandomCode(nDigits);
+        // If leaderboard requested, use first code as party code.
+        const party =  useLeaderboard ? (codes[0] ? codes[0] : code) : null;
+        const wasValid = await checkAndSaveCode(code, party);
+        if (wasValid) {
+            codes.push(code);
+        } else {
+            nRetries++;
+        }
+    }
+    return codes;
+}
+
+app.get("/api/codes/create", async (request, response) => {
+    const nTeamsRaw = request.query.n;
+    const useLeaderboard = request.query.lb === "true";
+    const nTeams = parseInt(nTeamsRaw);
+    if (isNaN(nTeams) || nTeams < 1 || nTeams > 50) {
+        response.send({ success: false, message: "Invalid number of teams." });
+    } else {
+        const codes = await createCodes(nTeams, useLeaderboard, maxRetries=100, nDigits=8);
+        const leaderboard = useLeaderboard ? codes[0] : false;
+        if (codes.length < nTeams) {
+            response.send({ success: false, message: "Failed to create codes." });
+        } else {
+            response.send({ success: true, codes: codes, leaderboard: leaderboard });
+        }
+    }
+});
+
 app.get("/api/game/create", (request, response) => {
     const gatewayRaw = request.query.gateway;
     if (gatewayRaw) {
@@ -288,7 +354,7 @@ app.get("/api/party/add/:party", (request, response) => {
 });
 
 app.get("/api/party/fetch/:party", (request, response) => {
-    const party = request.params.party;
+    const party = request.params.party ? request.params.party.toLowerCase() : false;
     if (party) {
         db.ref(`${ROOT}/games`).orderByChild("party").equalTo(party).once("value", (snap) => {
             const games = snap.val() || {};

@@ -54,6 +54,10 @@ li {
     margin: 20px auto;
 }
 
+.hidden {
+    display: none !important;
+}
+
 strong {
     font-weight: bold;
 }
@@ -80,6 +84,14 @@ ul ul {
     margin: 0 30px;
 }
 
+.inset li {
+    margin-left: 10px;
+}
+
+ol.inset li {
+    margin-left: 25px;
+}
+
 .content ul ul {
     margin: 0 30px;
 }
@@ -88,6 +100,10 @@ ul ul {
     margin: 0 auto;
     display: block;
     width: 450px;
+}
+
+.centered-list.wider {
+    width: 500px;
 }
 
 .content ol {
@@ -105,6 +121,8 @@ ul ul {
 }
 
 .button {
+    font-family: 'Inconsolata', monospace;
+    font-size: 18px;
     border: 2px solid black;
     display: inline-block;
     margin: 10px;
@@ -123,6 +141,10 @@ ul ul {
     font-weight: bold;
     padding: 10px;
     font-size: 20px;
+}
+
+.button.left {
+    margin: 10px 0;
 }
 
 /* Sections */
@@ -290,4 +312,46 @@ ul ul {
         height: 300px;
     }
 
+}
+
+/* Game Codes */
+
+.constrained {
+    margin: 0 auto;
+    max-width: 650px;
+}
+
+.input, .label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 18px;
+    padding: 5px;
+}
+
+#codes-output {
+    text-transform: uppercase;
+}
+
+.cause-card-holder {
+    text-align: center;
+}
+
+.cause-card {
+    display: inline-block;
+    text-align: center;
+    width: 200px;
+    padding: 0 20px;
+    padding-bottom: 20px;
+    margin: 0 auto;
+}
+
+.cause-card h3 {
+    text-decoration: none currentcolor solid !important;
+}
+
+.cause-card img {
+    border: 2px solid black;
+    display: inline-block;
+    margin: 10px auto;
+    width: 180px;
+    height: 180px;
 }

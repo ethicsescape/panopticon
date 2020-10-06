@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Virtual escape room about surveillance technology.">
+        <meta property="og:image" content="https://ethicsescape.github.io/panopticon/assets/img/screenshot_clues.png">
+        <title>Panopticon</title>
+        <link id="favicon" rel="icon" href="https://ethicsescape.github.io/panopticon/assets/img/logo-white.png" type="image/png">
+
+        <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="./assets/css/reset.css">
+        <link rel="stylesheet" href="./assets/css/landing.css">
+    </head>
+    <body>
+        <section class="section">
+            <div class="constrained">
+                <h1 class="centered uppercase title">
+                    <img alt="Logo" src="./assets/img/logo-black.png" /> 
+                    <span>Panopticon</span>
+                </h1>
+                <h2>How to Play</h2>
+                <ol class="inset">
+                    <li>Create game codes below and share with your players.</li>
+                    <li>Consider supporting our highlighted nonprofits.</li>
+                    <li>Watch our <a href="https://youtu.be/LGeD2ML0h50" target="_blank" rel="noopener">introduction video</a> (includes captions).</li>
+                    <li><a href="./" target="_blank" rel="noopener">Escape the (virtual) room</a> and discuss how it went!</li>
+                </ol>
+                <h2>Game Codes</h2>
+                <p>Split up into teams of 2-4 players, then generate game codes below. You can also create a leaderboard so that teams can compare results at the end!</p>
+                <div id="codes-form">
+                    <p>
+                        <span>How many teams will you have?</span>
+                        <span><input id="n-teams" class="input" type="number" min="1" max="50" step="1" value="1" /></span>
+                    </p>
+                    <p>
+                        <span>Do you want a leaderboard?</span>
+                        <label class="label">Yes<input type="radio" name="leaderboard" value="true"></label>
+                        <label class="label">No<input type="radio" name="leaderboard" value="false" checked></label>
+                    </p>
+                    <p class="centered">
+                        <button id="create-codes" class="button left">Create Game Codes</button>
+                    </p>
+                </div>
+                <div id="loading" class="hidden">
+                    <p>Working on it...</p>
+                </div>
+                <div id="codes-result" class="hidden">
+                    <p>Leaderboard Link: <span id="leaderboard-link"></span></p>
+                    <p>Copy your game codes:</p>
+                    <ol id="codes-output" class="inset"></ol>
+                    <p class="centered">
+                        <a href="./" target="_blank" rel="noopener" class="button">Play the Game</a>
+                    </p>
+                </div>
+                <div id="codes-error" class="hidden">
+                    <p>Please try again. Something went wrong: <span></span></p>
+                    <p>Contact Vinesh Kannan (vingkan [at] gmail [dot] com) if you continue to have problems with this form.</p>
+                </div>
+                <h2>Support</h2>
+                <div class="cause-card-holder">
+                    <a class="cause-card" href="https://sfbike.org/" target="_blank" rel="noopener">
+                        <h3>San Francisco Bike Coalition</h3>
+                        <img src="./assets/img/logo-sfbikecoalition.jpeg" alt="Logo for the San Francisco Bicycle Coalition" />
+                        <button class="button">Visit Site</button>
+                    </a>
+                    <a class="cause-card" href="https://www.calymca.org/" target="_blank" rel="noopener">
+                        <h3>Cal YMCA Youth & Government</h3>
+                        <img src="./assets/img/logo-calymcayg.jpeg" alt="Logo for the California YMCA Youth and Government Program" />
+                        <button class="button">Visit Site</button>
+                    </a>
+                </div>
+                <p>We dedicate the game to all the people working towards technological justice, including our late friend Courtney Brousseau.</p>
+                <p>If you are excited about this game, we would greatly appreciate your support in the form of donations to one or both of these nonprofits.</p>
+                <p>Please consider making your donation in honor of Courtney Brousseau, so the organizations can put your contribution towards programs that he championed.</p>
+            </div>
+        </section>
+        <section class="section standout">
+            <div class="centered footer">
+                <p>Photo by <a href="https://www.pexels.com/@zhangkaiyv?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels" target="_blank" rel="noopener">zhang kaiyv</a> from <a href="https://www.pexels.com/photo/building-structure-interior-1021235/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels" target="_blank" rel="noopener">Pexels</a></p>
+                <p>
+                    <a href="./privacy">Privacy</a>
+                    <span> | </span>
+                    <a href="./terms">Terms</a>
+                </p>
+            </div>
+        </section>
+        <script type="text/javascript">
+
+            /*
+             * From StackOverflow:
+             * https://stackoverflow.com/questions/35294633/what-is-the-vanilla-js-version-of-jquerys-getjson/35294675
+             */
+            function fetch(url) {
+                return new Promise((resolve, reject) => {
+                    let request = new XMLHttpRequest();
+                    request.open("GET", url, true);
+                    request.onload = function() {
+                        if (request.status >= 200 && request.status < 400) {
+                            let data = JSON.parse(request.responseText);
+                            resolve(data);
+                        } else {
+                            reject(request.responseText);
+                        }
+                    };
+                    request.onerror = function(err) {
+                        reject(err);
+                    };
+                    request.send();
+                });
+            }
+
+            function getAPIRoot(forceProduction = false) {
+                const onLocal = window.location.origin.indexOf("localhost") > -1;
+                if (forceProduction || !onLocal) {
+                    return "https://panopticonsecurity.herokuapp.com";
+                } else {
+                    return "http://localhost:3000";
+                }
+            }
+
+            function getSiteRoot() {
+                if(window.location.origin.indexOf("localhost") > -1) {
+                    return window.location.origin;
+                } else { 
+                    return `${window.location.origin}/panopticon`
+                }
+            }
+
+            const API_ROOT = getAPIRoot();
+            const SITE_ROOT = getSiteRoot();
+
+            const codesBtn = document.querySelector("#create-codes");
+            codesBtn.addEventListener("click", (e) => {
+                codesBtn.classList.add("hidden");
+                document.querySelector("#loading").classList.remove("hidden");
+                document.querySelector("#codes-result").classList.add("hidden");
+                document.querySelector("#codes-error").classList.add("hidden");
+                const n = document.querySelector("#n-teams").value;
+                const lb = document.querySelector("[name='leaderboard'][value='true']").checked;
+                const reqUrl = `${API_ROOT}/api/codes/create?n=${encodeURIComponent(n)}&lb=${encodeURIComponent(lb)}`;
+                fetch(reqUrl).then((res) => {
+                    document.querySelector("#loading").classList.add("hidden");
+                    if (res.success) {
+                        const ul = document.querySelector("#codes-output");
+                        res.codes.forEach((code) => {
+                            const li = document.createElement("li");
+                            li.innerText = code;
+                            ul.appendChild(li);
+                        });
+                        const lbSpan = document.querySelector("#leaderboard-link");
+                        if (res.leaderboard) {
+                            const a = document.createElement("a");
+                            const leaderboardUrl = `${SITE_ROOT}/party?c=${encodeURIComponent(res.leaderboard)}`;
+                            a.href = leaderboardUrl;
+                            a.target = "_blank";
+                            a.rel = "noopener";
+                            a.innerText = leaderboardUrl;
+                            lbSpan.appendChild(a);
+                        } else {
+                            lbSpan.innerText = "No Leaderboard."
+                        }
+                        document.querySelector("#codes-result").classList.remove("hidden");
+                    } else {
+                        codesBtn.classList.remove("hidden");
+                        document.querySelector("#codes-error p span").innerText = res.message;
+                        document.querySelector("#codes-error").classList.remove("hidden");
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    codesBtn.classList.remove("hidden");
+                    document.querySelector("#loading").classList.add("hidden");
+                    document.querySelector("#codes-error p span").innerText = "Could not reach server.";
+                    document.querySelector("#codes-error").classList.remove("hidden");
+                });
+            });
+
+
+        </script>
+    </body>
+</html>

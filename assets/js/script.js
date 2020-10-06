@@ -1157,6 +1157,11 @@ function showResults(discussionEl, data, finalSubmission, gameId, userId) {
     });
     const resMisEl = document.querySelector("#results-missions");
     resMisEl.innerHTML = "";
+    if (Object.keys(gameMissionMap).length === 0) {
+        const endP = document.createElement("p");
+        endP.innerText = "No one had a secret mission.";
+        resMisEl.appendChild(endP);
+    }
     Object.keys(gameMissionMap).forEach((doerId) => {
         const div = document.createElement("div");
         div.classList.add("row-half");
