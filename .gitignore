@@ -111,6 +111,17 @@ _site/*
 server/node_modules/
 server/.env
 
+# Virtual Environment
+venv/*
+
+# Notebook Checkpoints
+
+notebooks/.ipynb_checkpoints/*
+
 # Working Files
 manage.js
 raw/*
+
+# SQL
+csv/*
+*.db
