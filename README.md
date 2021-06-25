@@ -45,6 +45,18 @@ To test the game, whether locally or in production, use the unlimited game code 
 
 ## Development Overview
 
+### Development Tools
+
+This project uses:
+
+- [Jekyll](https://jekyllrb.com) for frontend static site generation.
+- Vanilla HTML, CSS, JS for frontend development.
+- Markdown for content development.
+- GitHub Pages for frontend deployment.
+- [Firebase Realtime Database](https://firebase.google.com/docs/database) for data storage.
+- [Express](https://expressjs.com) for the backend API framework.
+- Heroku for backend deployment.
+
 ### Directory Structure
 
 The main folders and files necessary for developing and running the game are:
